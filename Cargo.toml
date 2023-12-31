@@ -1,2 +1,23 @@
 [workspace]
 members = ["crates/*"]
+resolver = "2"
+
+[profile.dev]
+opt-level = 1
+
+[profile.release]
+debug = true
+incremental = true
+lto = "thin"
+
+# windows-gnu should use it until rust-lang/rust#98302 is not fixed
+[profile.release-no-lto]
+inherits = "release"
+lto = "off"
+
+[profile.release-strip]
+inherits = "release"
+strip = "symbols"
+
+[profile.bench]
+incremental = true
