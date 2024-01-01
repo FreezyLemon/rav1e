@@ -1321,7 +1321,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "rav1e-asm-x86"
+name = "rav1e_asm_x86"
 version = "0.0.0"
 dependencies = [
  "built",
