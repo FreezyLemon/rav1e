@@ -13,6 +13,8 @@ use crate::frame::*;
 use crate::tiling::PlaneRegionMut;
 use crate::util::*;
 
+use rav1e_asm_x86::cdef::*;
+
 type CdefFilterFn = unsafe extern fn(
   dst: *mut u8,
   dst_stride: isize,

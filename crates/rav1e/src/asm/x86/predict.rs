@@ -18,6 +18,8 @@ use crate::Pixel;
 use std::mem::MaybeUninit;
 use v_frame::pixel::PixelType;
 
+use rav1e_asm_x86::predict::*;
+
 #[inline(always)]
 pub fn dispatch_predict_intra<T: Pixel>(
   mode: PredictionMode, variant: PredictionVariant,

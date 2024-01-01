@@ -8,7 +8,7 @@ macro_rules! decl_itx_fns {
         $(
           extern {
             // Note: type1 and type2 are flipped
-            fn [<rav1e_inv_txfm_add_ $TYPE2 _$TYPE1 _$W x $H _8bpc_$OPT_LOWER>](
+            pub fn [<rav1e_inv_txfm_add_ $TYPE2 _$TYPE1 _$W x $H _8bpc_$OPT_LOWER>](
               dst: *mut u8, dst_stride: libc::ptrdiff_t, coeff: *mut i16,
               eob: i32
             );
@@ -148,7 +148,7 @@ macro_rules! decl_itx_hbd_fns {
         $(
           extern {
             // Note: type1 and type2 are flipped
-            fn [<rav1e_inv_txfm_add_ $TYPE2 _$TYPE1 _$W x $H _ $BPC bpc_$OPT_LOWER>](
+            pub fn [<rav1e_inv_txfm_add_ $TYPE2 _$TYPE1 _$W x $H _ $BPC bpc_$OPT_LOWER>](
               dst: *mut u16, dst_stride: libc::ptrdiff_t, coeff: *mut i16,
               eob: i32, bitdepth_max: i32,
             );

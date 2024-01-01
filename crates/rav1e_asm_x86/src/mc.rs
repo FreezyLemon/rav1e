@@ -3,17 +3,17 @@ macro_rules! decl_mc_fns {
     paste::item! {
       extern {
         $(
-          fn [<$func_name _ssse3>](
+          pub fn [<$func_name _ssse3>](
             dst: *mut u8, dst_stride: isize, src: *const u8, src_stride: isize,
             w: i32, h: i32, mx: i32, my: i32
           );
 
-          fn [<$func_name _avx2>](
+          pub fn [<$func_name _avx2>](
             dst: *mut u8, dst_stride: isize, src: *const u8, src_stride: isize,
             w: i32, h: i32, mx: i32, my: i32
           );
 
-          fn [<$func_name _avx512icl>](
+          pub fn [<$func_name _avx512icl>](
             dst: *mut u8, dst_stride: isize, src: *const u8, src_stride: isize,
             w: i32, h: i32, mx: i32, my: i32
           );
@@ -33,7 +33,7 @@ decl_mc_fns!(
   rav1e_put_8tap_sharp_regular_8bpc,
   rav1e_put_8tap_sharp_smooth_8bpc,
   rav1e_put_8tap_sharp_8bpc,
-  rav1e_put_bilin_8bp
+  rav1e_put_bilin_8bpc
 );
 
 macro_rules! decl_mc_hbd_fns {
@@ -41,12 +41,12 @@ macro_rules! decl_mc_hbd_fns {
     paste::item! {
       extern {
         $(
-          fn [<$func_name _ssse3>](
+          pub fn [<$func_name _ssse3>](
             dst: *mut u16, dst_stride: isize, src: *const u16, src_stride: isize,
             w: i32, h: i32, mx: i32, my: i32, bitdepth_max: i32,
           );
 
-          fn [<$func_name _avx2>](
+          pub fn [<$func_name _avx2>](
             dst: *mut u16, dst_stride: isize, src: *const u16, src_stride: isize,
             w: i32, h: i32, mx: i32, my: i32, bitdepth_max: i32,
           );
@@ -74,22 +74,22 @@ macro_rules! decl_mct_fns {
     paste::item! {
       extern {
         $(
-          fn [<$func_name _sse2>](
+          pub fn [<$func_name _sse2>](
             tmp: *mut i16, src: *const u8, src_stride: libc::ptrdiff_t, w: i32,
             h: i32, mx: i32, my: i32
           );
 
-          fn [<$func_name _ssse3>](
+          pub fn [<$func_name _ssse3>](
             tmp: *mut i16, src: *const u8, src_stride: libc::ptrdiff_t, w: i32,
             h: i32, mx: i32, my: i32
           );
 
-          fn [<$func_name _avx2>](
+          pub fn [<$func_name _avx2>](
             tmp: *mut i16, src: *const u8, src_stride: libc::ptrdiff_t, w: i32,
             h: i32, mx: i32, my: i32
           );
 
-          fn [<$func_name _avx512icl>](
+          pub fn [<$func_name _avx512icl>](
             tmp: *mut i16, src: *const u8, src_stride: libc::ptrdiff_t, w: i32,
             h: i32, mx: i32, my: i32
           );
@@ -117,12 +117,12 @@ macro_rules! decl_mct_hbd_fns {
     paste::item! {
       extern {
         $(
-          fn [<$func_name _ssse3>](
+          pub fn [<$func_name _ssse3>](
             tmp: *mut i16, src: *const u16, src_stride: libc::ptrdiff_t, w: i32,
             h: i32, mx: i32, my: i32, bitdepth_max: i32,
           );
 
-          fn [<$func_name _avx2>](
+          pub fn [<$func_name _avx2>](
             tmp: *mut i16, src: *const u16, src_stride: libc::ptrdiff_t, w: i32,
             h: i32, mx: i32, my: i32, bitdepth_max: i32,
           );
@@ -146,27 +146,27 @@ decl_mct_hbd_fns!(
 );
 
 extern {
-  fn rav1e_avg_8bpc_ssse3(
+  pub fn rav1e_avg_8bpc_ssse3(
     dst: *mut u8, dst_stride: libc::ptrdiff_t, tmp1: *const i16,
     tmp2: *const i16, w: i32, h: i32,
   );
 
-  fn rav1e_avg_8bpc_avx2(
+  pub fn rav1e_avg_8bpc_avx2(
     dst: *mut u8, dst_stride: libc::ptrdiff_t, tmp1: *const i16,
     tmp2: *const i16, w: i32, h: i32,
   );
 
-  fn rav1e_avg_8bpc_avx512icl(
+  pub fn rav1e_avg_8bpc_avx512icl(
     dst: *mut u8, dst_stride: libc::ptrdiff_t, tmp1: *const i16,
     tmp2: *const i16, w: i32, h: i32,
   );
 
-  fn rav1e_avg_16bpc_ssse3(
+  pub fn rav1e_avg_16bpc_ssse3(
     dst: *mut u16, dst_stride: libc::ptrdiff_t, tmp1: *const i16,
     tmp2: *const i16, w: i32, h: i32, bitdepth_max: i32,
   );
 
-  fn rav1e_avg_16bpc_avx2(
+  pub fn rav1e_avg_16bpc_avx2(
     dst: *mut u16, dst_stride: libc::ptrdiff_t, tmp1: *const i16,
     tmp2: *const i16, w: i32, h: i32, bitdepth_max: i32,
   );

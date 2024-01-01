@@ -15,6 +15,8 @@ use crate::{Pixel, PixelType};
 
 use crate::asm::shared::transform::inverse::*;
 
+use rav1e_asm_x86::transform::inverse::*;
+
 pub fn inverse_transform_add<T: Pixel>(
   input: &[T::Coeff], output: &mut PlaneRegionMut<'_, T>, eob: u16,
   tx_size: TxSize, tx_type: TxType, bd: usize, cpu: CpuFeatureLevel,

@@ -40,7 +40,7 @@ binaries = [
 ]
 default = ["binaries", "asm", "threading", "signal_support", "git_version"]
 git_version = ["built/git2"]
-asm = ["nasm-rs", "cc"]
+asm = ["cc", "rav1e_asm_x86"]
 threading = ["rayon/threads"]
 signal_support = ["signal-hook"]
 dump_ivf = ["ivf"]
@@ -133,13 +133,11 @@ features = ["png"]
 cc = { version = "1.0", optional = true, features = ["parallel"] }
 built = { version = "0.7.1", features = [] }
 
-[build-dependencies.nasm-rs]
-version = "0.2"
-optional = true
-features = ["parallel"]
-
 [target.'cfg(unix)'.dependencies]
 signal-hook = { version = "0.3", optional = true }
+
+[target.'cfg(target_arch = "x86_64")'.dependencies]
+rav1e_asm_x86 = { path = "../rav1e_asm_x86", optional = true }
 
 [dev-dependencies]
 pretty_assertions = "1.4.0"

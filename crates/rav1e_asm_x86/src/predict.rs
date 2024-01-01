@@ -4,7 +4,7 @@ macro_rules! decl_angular_ipred_fn {
   ($($f:ident),+) => {
     extern {
       $(
-        fn $f(
+        pub fn $f(
           dst: *mut u8, stride: libc::ptrdiff_t, topleft: *const u8,
           width: libc::c_int, height: libc::c_int, angle: libc::c_int,
         );
@@ -54,7 +54,7 @@ macro_rules! decl_angular_ipred_hbd_fn {
   ($($f:ident),+) => {
     extern {
       $(
-        fn $f(
+        pub fn $f(
           dst: *mut u16, stride: libc::ptrdiff_t, topleft: *const u16,
           width: libc::c_int, height: libc::c_int, angle: libc::c_int,
           max_width: libc::c_int, max_height: libc::c_int,
@@ -101,20 +101,19 @@ decl_angular_ipred_hbd_fn! {
 // the distance between the predicted block's top-left pixel and the frame's edge.
 // It is required for the intra edge filtering process.
 extern {
-
-  fn rav1e_ipred_z2_8bpc_ssse3(
+  pub fn rav1e_ipred_z2_8bpc_ssse3(
     dst: *mut u8, stride: libc::ptrdiff_t, topleft: *const u8,
     width: libc::c_int, height: libc::c_int, angle: libc::c_int,
     dx: libc::c_int, dy: libc::c_int,
   );
 
-  fn rav1e_ipred_z2_8bpc_avx2(
+  pub fn rav1e_ipred_z2_8bpc_avx2(
     dst: *mut u8, stride: libc::ptrdiff_t, topleft: *const u8,
     width: libc::c_int, height: libc::c_int, angle: libc::c_int,
     dx: libc::c_int, dy: libc::c_int,
   );
 
-  fn rav1e_ipred_z2_16bpc_avx2(
+  pub fn rav1e_ipred_z2_16bpc_avx2(
     dst: *mut u16, stride: libc::ptrdiff_t, topleft: *const u16,
     width: libc::c_int, height: libc::c_int, angle: libc::c_int,
     dx: libc::c_int, dy: libc::c_int, bit_depth_max: libc::c_int,
@@ -125,7 +124,7 @@ macro_rules! decl_cfl_ac_fn {
   ($($f:ident),+) => {
     extern {
       $(
-        fn $f(
+        pub fn $f(
           ac: *mut MaybeUninit<i16>, src: *const u8, stride: libc::ptrdiff_t,
           w_pad: libc::c_int, h_pad: libc::c_int,
           width: libc::c_int, height: libc::c_int,
@@ -148,7 +147,7 @@ macro_rules! decl_cfl_ac_hbd_fn {
   ($($f:ident),+) => {
     extern {
       $(
-        fn $f(
+        pub fn $f(
           ac: *mut MaybeUninit<i16>, src: *const u16, stride: libc::ptrdiff_t,
           w_pad: libc::c_int, h_pad: libc::c_int,
           width: libc::c_int, height: libc::c_int,
@@ -171,7 +170,7 @@ macro_rules! decl_cfl_pred_fn {
   ($($f:ident),+) => {
     extern {
       $(
-        fn $f(
+        pub fn $f(
           dst: *mut u8, stride: libc::ptrdiff_t, topleft: *const u8,
           width: libc::c_int, height: libc::c_int, ac: *const i16,
           alpha: libc::c_int,
@@ -196,7 +195,7 @@ macro_rules! decl_cfl_pred_hbd_fn {
   ($($f:ident),+) => {
     extern {
       $(
-        fn $f(
+        pub fn $f(
           dst: *mut u16, stride: libc::ptrdiff_t, topleft: *const u16,
           width: libc::c_int, height: libc::c_int, ac: *const i16,
           alpha: libc::c_int, bit_depth_max: libc::c_int,

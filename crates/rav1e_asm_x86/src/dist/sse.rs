@@ -1,7 +1,7 @@
 macro_rules! declare_asm_sse_fn {
   ($($name: ident),+) => (
     $(
-      extern { fn $name (
+      extern { pub fn $name (
         src: *const u8, src_stride: isize, dst: *const u8, dst_stride: isize, scale: *const u32, scale_stride: isize
       ) -> u64; }
     )+
@@ -11,7 +11,7 @@ macro_rules! declare_asm_sse_fn {
 macro_rules! declare_asm_hbd_sse_fn {
   ($($name: ident),+) => (
     $(
-      extern { fn $name (
+      extern { pub fn $name (
         src: *const u16, src_stride: isize, dst: *const u16, dst_stride: isize, scale: *const u32, scale_stride: isize
       ) -> u64; }
     )+

@@ -15,6 +15,8 @@ use v_frame::plane::Plane;
 
 use std::mem;
 
+use rav1e_asm_x86::sad_plane::*;
+
 pub(crate) fn sad_plane_internal<T: Pixel>(
   src: &Plane<T>, dst: &Plane<T>, cpu: CpuFeatureLevel,
 ) -> u64 {

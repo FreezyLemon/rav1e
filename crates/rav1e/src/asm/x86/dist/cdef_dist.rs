@@ -15,6 +15,8 @@ use crate::util::Pixel;
 use crate::util::PixelType;
 use std::arch::x86_64::*;
 
+use rav1e_asm_x86::dist::cdef_dist::*;
+
 type CdefDistKernelFn = unsafe extern fn(
   src: *const u8,
   src_stride: isize,

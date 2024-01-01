@@ -14,6 +14,8 @@ use crate::mc::*;
 use crate::tiling::*;
 use crate::util::*;
 
+use rav1e_asm_x86::mc::*;
+
 type PutFn = unsafe extern fn(
   dst: *mut u8,
   dst_stride: isize,

@@ -15,6 +15,8 @@ use crate::rdo::DistortionScale;
 use crate::tiling::PlaneRegion;
 use crate::util::*;
 
+use rav1e_asm_x86::dist::sse::*;
+
 type WeightedSseFn = unsafe extern fn(
   src: *const u8,
   src_stride: isize,

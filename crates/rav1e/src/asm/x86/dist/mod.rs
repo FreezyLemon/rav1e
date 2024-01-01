@@ -15,6 +15,8 @@ use crate::partition::BlockSize;
 use crate::tiling::*;
 use crate::util::*;
 
+use rav1e_asm_x86::dist::*;
+
 mod cdef_dist;
 mod sse;
 
