@@ -71,18 +71,6 @@ macro_rules! decl_itx_fns {
   ([$([$(($ENUM:expr, $TYPE1:ident, $TYPE2:ident)),*]),*], $W:expr, $H:expr,
    $OPT_LOWER:ident, $OPT_UPPER:ident) => {
     paste::item! {
-      // For each tx type, declare an function for the current WxH
-      $(
-        $(
-          extern {
-            // Note: type1 and type2 are flipped
-            fn [<rav1e_inv_txfm_add_ $TYPE2 _$TYPE1 _$W x $H _8bpc_$OPT_LOWER>](
-              dst: *mut u8, dst_stride: libc::ptrdiff_t, coeff: *mut i16,
-              eob: i32
-            );
-          }
-        )*
-      )*
       // Create a lookup table for the tx types declared above
       const [<INV_TXFM_FNS_$W _$H _$OPT_UPPER>]: [Option<InvTxfmFunc>; TX_TYPES_PLUS_LL] = {
         let mut out: [Option<InvTxfmFunc>; TX_TYPES_PLUS_LL] = [None; TX_TYPES_PLUS_LL];
@@ -102,18 +90,6 @@ macro_rules! decl_itx_hbd_fns {
   ([$([$(($ENUM:expr, $TYPE1:ident, $TYPE2:ident)),*]),*], $W:expr, $H:expr, $BPC:expr,
    $OPT_LOWER:ident, $OPT_UPPER:ident) => {
     paste::item! {
-      // For each tx type, declare an function for the current WxH
-      $(
-        $(
-          extern {
-            // Note: type1 and type2 are flipped
-            fn [<rav1e_inv_txfm_add_ $TYPE2 _$TYPE1 _$W x $H _ $BPC bpc_$OPT_LOWER>](
-              dst: *mut u16, dst_stride: libc::ptrdiff_t, coeff: *mut i16,
-              eob: i32, bitdepth_max: i32,
-            );
-          }
-        )*
-      )*
       // Create a lookup table for the tx types declared above
       const [<INV_TXFM_HBD_FNS_$W _$H _$BPC _$OPT_UPPER>]: [Option<InvTxfmHBDFunc>; TX_TYPES_PLUS_LL] = {
         #[allow(unused_mut)]
