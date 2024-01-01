@@ -1,5 +1,6 @@
 [workspace]
 members = ["crates/*"]
+default-members = ["crates/rav1e"]
 resolver = "2"
 
 [profile.dev]
