@@ -1321,6 +1321,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "rav1e_asm_aarch64"
+version = "0.0.0"
+dependencies = [
+ "cc",
+ "libc",
+ "paste",
+]
+
+[[package]]
 name = "rav1e_asm_x86"
 version = "0.0.0"
 dependencies = [

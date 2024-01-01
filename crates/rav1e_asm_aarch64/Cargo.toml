@@ -1,0 +1,13 @@
+[package]
+name = "rav1e_asm_aarch64"
+version = "0.0.0"
+authors = ["Thomas Daede <tdaede@xiph.org>"]
+edition = "2021"
+rust-version = "1.70.0"
+
+[dependencies]
+libc = "0.2"
+paste = "1.0"
+
+[build-dependencies]
+cc = { version = "1.0", features = ["parallel"] }
