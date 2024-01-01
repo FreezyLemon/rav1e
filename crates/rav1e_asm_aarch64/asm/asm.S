@@ -28,8 +28,6 @@
 #ifndef DAV1D_SRC_ARM_ASM_S
 #define DAV1D_SRC_ARM_ASM_S
 
-#include "config.h"
-
 #if ARCH_AARCH64
 #define x18 do_not_use_x18
 #define w18 do_not_use_w18

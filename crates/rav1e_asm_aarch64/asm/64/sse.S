@@ -8,7 +8,7 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
-#include "src/arm/asm.S"
+#include "asm/asm.S"
 #include "util.S"
 
 .macro LOAD_X4 t=q

@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "src/arm/asm.S"
+#include "asm/asm.S"
 
 #define FILTER_OUT_STRIDE 384
 

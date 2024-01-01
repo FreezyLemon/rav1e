@@ -26,7 +26,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "src/arm/asm.S"
+#include "asm/asm.S"
 #include "util.S"
 
 .macro avg dst, t0, t1, t2, t3

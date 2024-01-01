@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-#include "src/arm/asm.S"
+#include "asm/asm.S"
 #include "util.S"
 
 // The exported functions in this file have got the following signature:

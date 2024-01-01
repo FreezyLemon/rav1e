@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "src/arm/asm.S"
+#include "asm/asm.S"
 #include "util.S"
 
 #define SUM_STRIDE (384+16)

@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "src/arm/asm.S"
+#include "asm/asm.S"
 #include "util.S"
 
 // void ipred_dc_128_8bpc_neon(pixel *dst, const ptrdiff_t stride,

@@ -29,8 +29,7 @@
 #ifndef DAV1D_SRC_ARM_32_UTIL_S
 #define DAV1D_SRC_ARM_32_UTIL_S
 
-#include "config.h"
-#include "src/arm/asm.S"
+#include "asm/asm.S"
 
 .macro movrel_local rd, val, offset=0
 #if defined(PIC)

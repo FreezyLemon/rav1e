@@ -7,11 +7,11 @@
 // Media Patent License 1.0 was not distributed with this source code in the
 // PATENTS file, you can obtain it at www.aomedia.org/license/patent.
 
-#[cfg(feature = "rav1e_asm_x86")]
+#[cfg(nasm_x86_64)]
 pub mod x86;
 
 #[cfg(asm_neon)]
 pub mod aarch64;
 
-#[cfg(any(feature = "rav1e_asm_x86", asm_neon))]
+#[cfg(any(nasm_x86_64, asm_neon))]
 pub mod shared;

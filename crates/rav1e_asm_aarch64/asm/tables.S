@@ -36,7 +36,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "src/arm/asm.S"
+#include "asm/asm.S"
 
 const mc_subpel_filters, export=1, align=3
 .byte  0,   1,  -3,  63,   4,  -1,   0,   0 /* REGULAR */

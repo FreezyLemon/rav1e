@@ -1302,6 +1302,7 @@ dependencies = [
  "quickcheck",
  "rand",
  "rand_chacha",
+ "rav1e_asm_aarch64",
  "rav1e_asm_x86",
  "scan_fmt",
  "semver",
