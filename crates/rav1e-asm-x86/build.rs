@@ -10,7 +10,6 @@
 #![allow(clippy::print_literal)]
 #![allow(clippy::unused_io_amount)]
 
-#[allow(unused_imports)]
 use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -191,7 +190,6 @@ fn strip_command() -> Option<String> {
   Some("strip".into())
 }
 
-#[allow(unused_variables)]
 fn main() {
   built::write_built_file().expect("Failed to acquire build-time information");
 
