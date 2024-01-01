@@ -24,7 +24,7 @@
 ; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 %include "config.asm"
-%include "ext/x86/x86inc.asm"
+%include "x86inc.asm"
 %include "x86/filmgrain_common.asm"
 
 SECTION_RODATA

@@ -8,7 +8,7 @@
 ; PATENTS file, you can obtain it at www.aomedia.org/license/patent.
 
 %include "config.asm"
-%include "ext/x86/x86inc.asm"
+%include "x86inc.asm"
 
 %if ARCH_X86_64
 

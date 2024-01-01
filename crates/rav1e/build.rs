@@ -68,111 +68,6 @@ fn hash_changed(
   Some((hash, hash_path))
 }
 
-#[cfg(feature = "asm")]
-fn build_nasm_files() {
-  let mut config = "
-%pragma preproc sane_empty_expansion true
-%define private_prefix rav1e
-%define ARCH_X86_32 0
-%define ARCH_X86_64 1
-%define PIC 1
-%define STACK_ALIGNMENT 16
-%define HAVE_AVX512ICL 1
-"
-  .to_owned();
-
-  if env::var("CARGO_CFG_TARGET_VENDOR").unwrap() == "apple" {
-    config += "%define PREFIX 1\n";
-  }
-
-  let out_dir = env::var("OUT_DIR").unwrap();
-  let dest_path = Path::new(&out_dir).join("config.asm");
-  std::fs::write(&dest_path, config).expect("can write config.asm");
-
-  let asm_files = &[
-    "src/x86/cdef_avx2.asm",
-    "src/x86/cdef_avx512.asm",
-    "src/x86/cdef_dist.asm",
-    "src/x86/cdef_rav1e.asm",
-    "src/x86/cdef_sse.asm",
-    "src/x86/cdef16_avx2.asm",
-    "src/x86/cdef16_avx512.asm",
-    "src/x86/cdef16_sse.asm",
-    "src/x86/ipred_avx2.asm",
-    "src/x86/ipred_avx512.asm",
-    "src/x86/ipred_sse.asm",
-    "src/x86/ipred16_avx2.asm",
-    "src/x86/ipred16_avx512.asm",
-    "src/x86/ipred16_sse.asm",
-    "src/x86/itx_avx2.asm",
-    "src/x86/itx_avx512.asm",
-    "src/x86/itx_sse.asm",
-    "src/x86/itx16_avx2.asm",
-    "src/x86/itx16_avx512.asm",
-    "src/x86/itx16_sse.asm",
-    "src/x86/looprestoration_avx2.asm",
-    "src/x86/looprestoration_avx512.asm",
-    "src/x86/looprestoration_sse.asm",
-    "src/x86/looprestoration16_avx2.asm",
-    "src/x86/looprestoration16_avx512.asm",
-    "src/x86/looprestoration16_sse.asm",
-    "src/x86/mc_avx2.asm",
-    "src/x86/mc_avx512.asm",
-    "src/x86/mc_sse.asm",
-    "src/x86/mc16_avx2.asm",
-    "src/x86/mc16_avx512.asm",
-    "src/x86/mc16_sse.asm",
-    "src/x86/me.asm",
-    "src/x86/sad_avx.asm",
-    "src/x86/sad_plane.asm",
-    "src/x86/sad_sse2.asm",
-    "src/x86/satd.asm",
-    "src/x86/satd16_avx2.asm",
-    "src/x86/sse.asm",
-    "src/x86/tables.asm",
-  ];
-
-  if let Some((hash, hash_path)) =
-    hash_changed(asm_files, &out_dir, &dest_path)
-  {
-    let obj = nasm_rs::Build::new()
-      .min_version(2, 15, 0)
-      .include(&out_dir)
-      .include("src")
-      .files(asm_files)
-      .compile_objects()
-      .unwrap_or_else(|e| {
-        panic!("NASM build failed. Make sure you have nasm installed or disable the \"asm\" feature.\n\
-                You can get NASM from https://nasm.us or your system's package manager.\n\
-                \n\
-                error: {e}");
-    });
-
-    // cc is better at finding the correct archiver
-    let mut cc = cc::Build::new();
-    for o in obj {
-      cc.object(o);
-    }
-    cc.compile("rav1easm");
-
-    // Strip local symbols from the asm library since they
-    // confuse the debugger.
-    if let Some(strip) = strip_command() {
-      let _ = std::process::Command::new(strip)
-        .arg("-x")
-        .arg(Path::new(&out_dir).join("librav1easm.a"))
-        .status();
-    }
-
-    std::fs::write(hash_path, &hash[..]).unwrap();
-  } else {
-    println!("cargo:rustc-link-search={out_dir}");
-  }
-  println!("cargo:rustc-link-lib=static=rav1easm");
-  rerun_dir("src/x86");
-  rerun_dir("src/ext/x86");
-}
-
 fn strip_command() -> Option<String> {
   let target = env::var("TARGET").expect("TARGET");
   // follows Cargo's naming convention for the linker setting
@@ -257,7 +152,6 @@ fn main() {
   {
     if arch == "x86_64" {
       println!("cargo:rustc-cfg={}", "nasm_x86_64");
-      build_nasm_files()
     }
     if arch == "aarch64" {
       println!("cargo:rustc-cfg={}", "asm_neon");

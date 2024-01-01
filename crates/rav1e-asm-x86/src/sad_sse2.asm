@@ -12,7 +12,7 @@
 ;
 
 %include "config.asm"
-%include "ext/x86/x86inc.asm"
+%include "x86inc.asm"
 
 SECTION .text
 

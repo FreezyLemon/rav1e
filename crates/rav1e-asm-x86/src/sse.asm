@@ -8,7 +8,7 @@
 ; PATENTS file, you can obtain it at www.aomedia.org/license/patent.
 
 %include "config.asm"
-%include "ext/x86/x86inc.asm"
+%include "x86inc.asm"
 
 ; Must match crate::dist::rust::GET_WEIGHTED_SSE_SHIFT
 %define get_weighted_sse_shift 8

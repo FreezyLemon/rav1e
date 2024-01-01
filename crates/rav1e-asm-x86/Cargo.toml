@@ -1,0 +1,14 @@
+[package]
+name = "rav1e-asm-x86"
+version = "0.0.0"
+authors = ["Thomas Daede <tdaede@xiph.org>"]
+edition = "2021"
+rust-version = "1.70.0"
+
+[build-dependencies]
+cc = { version = "1.0", features = ["parallel"] }
+built = "0.7.1"
+
+[build-dependencies.nasm-rs]
+version = "0.2"
+features = ["parallel"]
