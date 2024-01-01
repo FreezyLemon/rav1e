@@ -18,6 +18,13 @@ const ASM_FILES: &[&str] = &[
 ];
 
 fn main() {
+  let arch = env::var("CARGO_CFG_TARGET_ARCH").unwrap();
+  if arch != "aarch64" {
+    // avoid running this build script with incorrect tooling,
+    // for example through rust-analyzer and other IDE tools
+    return;
+  }
+
   let mut config = "
 #define PRIVATE_PREFIX rav1e_
 #define ARCH_AARCH64 1

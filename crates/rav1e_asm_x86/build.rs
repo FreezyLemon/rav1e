@@ -128,6 +128,13 @@ fn strip_command() -> Option<String> {
 }
 
 fn main() {
+  let arch = env::var("CARGO_CFG_TARGET_ARCH").unwrap();
+  if arch != "x86_64" {
+    // avoid running this build script with incorrect tooling,
+    // for example through rust-analyzer and other IDE tools
+    return;
+  }
+
   build_nasm_files();
 
   println!("cargo:rustc-env=PROFILE={}", env::var("PROFILE").unwrap());
