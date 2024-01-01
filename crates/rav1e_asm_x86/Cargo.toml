@@ -5,6 +5,9 @@ authors = ["Thomas Daede <tdaede@xiph.org>"]
 edition = "2021"
 rust-version = "1.70.0"
 
+[dependencies]
+rav1e_asm_shared = { path = "../rav1e_asm_shared" }
+
 [build-dependencies]
 cc = { version = "1.0", features = ["parallel"] }
 built = "0.7.1"
