@@ -1328,6 +1328,7 @@ dependencies = [
  "cc",
  "libc",
  "nasm-rs",
+ "paste",
 ]
 
 [[package]]

@@ -322,25 +322,6 @@ pub fn mc_avg<T: Pixel>(
 macro_rules! decl_mc_fns {
   ($(($mode_x:expr, $mode_y:expr, $func_name:ident)),+) => {
     paste::item! {
-      extern {
-        $(
-          fn [<$func_name _ssse3>](
-            dst: *mut u8, dst_stride: isize, src: *const u8, src_stride: isize,
-            w: i32, h: i32, mx: i32, my: i32
-          );
-
-          fn [<$func_name _avx2>](
-            dst: *mut u8, dst_stride: isize, src: *const u8, src_stride: isize,
-            w: i32, h: i32, mx: i32, my: i32
-          );
-
-          fn [<$func_name _avx512icl>](
-            dst: *mut u8, dst_stride: isize, src: *const u8, src_stride: isize,
-            w: i32, h: i32, mx: i32, my: i32
-          );
-        )*
-      }
-
       static PUT_FNS_SSSE3: [Option<PutFn>; 16] = {
         let mut out: [Option<PutFn>; 16] = [None; 16];
         $(
@@ -390,20 +371,6 @@ cpu_function_lookup_table!(
 macro_rules! decl_mc_hbd_fns {
   ($(($mode_x:expr, $mode_y:expr, $func_name:ident)),+) => {
     paste::item! {
-      extern {
-        $(
-          fn [<$func_name _ssse3>](
-            dst: *mut u16, dst_stride: isize, src: *const u16, src_stride: isize,
-            w: i32, h: i32, mx: i32, my: i32, bitdepth_max: i32,
-          );
-
-          fn [<$func_name _avx2>](
-            dst: *mut u16, dst_stride: isize, src: *const u16, src_stride: isize,
-            w: i32, h: i32, mx: i32, my: i32, bitdepth_max: i32,
-          );
-        )*
-      }
-
       static PUT_HBD_FNS_SSSE3: [Option<PutHBDFn>; 16] = {
         let mut out: [Option<PutHBDFn>; 16] = [None; 16];
         $(
@@ -445,30 +412,6 @@ cpu_function_lookup_table!(
 macro_rules! decl_mct_fns {
   ($(($mode_x:expr, $mode_y:expr, $func_name:ident)),+) => {
     paste::item! {
-      extern {
-        $(
-          fn [<$func_name _sse2>](
-            tmp: *mut i16, src: *const u8, src_stride: libc::ptrdiff_t, w: i32,
-            h: i32, mx: i32, my: i32
-          );
-
-          fn [<$func_name _ssse3>](
-            tmp: *mut i16, src: *const u8, src_stride: libc::ptrdiff_t, w: i32,
-            h: i32, mx: i32, my: i32
-          );
-
-          fn [<$func_name _avx2>](
-            tmp: *mut i16, src: *const u8, src_stride: libc::ptrdiff_t, w: i32,
-            h: i32, mx: i32, my: i32
-          );
-
-          fn [<$func_name _avx512icl>](
-            tmp: *mut i16, src: *const u8, src_stride: libc::ptrdiff_t, w: i32,
-            h: i32, mx: i32, my: i32
-          );
-        )*
-      }
-
       static PREP_FNS_SSE2: [Option<PrepFn>; 16] = {
         let mut out: [Option<PrepFn>; 16] = [None; 16];
         $(
@@ -526,20 +469,6 @@ cpu_function_lookup_table!(
 macro_rules! decl_mct_hbd_fns {
   ($(($mode_x:expr, $mode_y:expr, $func_name:ident)),+) => {
     paste::item! {
-      extern {
-        $(
-          fn [<$func_name _ssse3>](
-            tmp: *mut i16, src: *const u16, src_stride: libc::ptrdiff_t, w: i32,
-            h: i32, mx: i32, my: i32, bitdepth_max: i32,
-          );
-
-          fn [<$func_name _avx2>](
-            tmp: *mut i16, src: *const u16, src_stride: libc::ptrdiff_t, w: i32,
-            h: i32, mx: i32, my: i32, bitdepth_max: i32,
-          );
-        )*
-      }
-
       static PREP_HBD_FNS_SSSE3: [Option<PrepHBDFn>; 16] = {
         let mut out: [Option<PrepHBDFn>; 16] = [None; 16];
         $(
