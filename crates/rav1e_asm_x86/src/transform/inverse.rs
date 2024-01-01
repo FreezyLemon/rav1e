@@ -317,3 +317,38 @@ impl_itx_hbd_fns!(
   _16,
   [(16, sse2, SSE2), (16, avx2, AVX2)]
 );
+
+impl_itx_hbd_fns!(
+  // 32x (DCT and IDTX swapped due to incomplete DCT implementation)
+  [(TxType::IDTX, identity, identity)],
+  [(32, 32), (32, 16), (16, 32)],
+  [(TxType::DCT_DCT, dct, dct)],
+  [(32, 8), (8, 32)],
+  // 16x16
+  [
+    (TxType::DCT_ADST, dct, adst),
+    (TxType::ADST_DCT, adst, dct),
+    (TxType::DCT_FLIPADST, dct, flipadst),
+    (TxType::FLIPADST_DCT, flipadst, dct),
+    (TxType::V_DCT, dct, identity),
+    (TxType::H_DCT, identity, dct),
+    (TxType::ADST_ADST, adst, adst),
+    (TxType::ADST_FLIPADST, adst, flipadst),
+    (TxType::FLIPADST_ADST, flipadst, adst),
+    (TxType::FLIPADST_FLIPADST, flipadst, flipadst)
+  ],
+  [(16, 16)],
+  // 8x, 4x and 16x (minus 16x16)
+  [
+    (TxType::V_ADST, adst, identity),
+    (TxType::H_ADST, identity, adst),
+    (TxType::V_FLIPADST, flipadst, identity),
+    (TxType::H_FLIPADST, identity, flipadst)
+  ],
+  [(16, 8), (8, 16), (16, 4), (4, 16), (8, 8), (8, 4), (4, 8), (4, 4)],
+  // 4x4
+  [],
+  [],
+  _12_,
+  [(12, avx2, AVX2)]
+);
