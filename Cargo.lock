@@ -1321,12 +1321,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "rav1e_asm_shared"
+version = "0.0.0"
+
+[[package]]
 name = "rav1e_asm_x86"
 version = "0.0.0"
 dependencies = [
  "built",
  "cc",
  "nasm-rs",
+ "rav1e_asm_shared",
 ]
 
 [[package]]

@@ -1,0 +1,6 @@
+[package]
+name = "rav1e_asm_shared"
+version = "0.0.0"
+authors = ["Thomas Daede <tdaede@xiph.org>"]
+edition = "2021"
+rust-version = "1.70.0"
