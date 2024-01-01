@@ -1326,6 +1326,7 @@ version = "0.0.0"
 dependencies = [
  "built",
  "cc",
+ "libc",
  "nasm-rs",
 ]
 
