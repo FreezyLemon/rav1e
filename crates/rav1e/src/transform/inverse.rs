@@ -24,7 +24,6 @@ use crate::util::*;
 
 use super::clamp_value;
 use super::consts::*;
-use super::get_1d_tx_types;
 use super::get_rect_tx_log_ratio;
 use super::half_btf;
 use super::TxSize;
@@ -1645,7 +1644,7 @@ pub(crate) mod rust {
     //   to zero for filling out missing input coeffs.
     let mut buffer = vec![0i32; width * height].into_boxed_slice();
     let rect_type = get_rect_tx_log_ratio(width, height);
-    let tx_types_1d = get_1d_tx_types(tx_type);
+    let tx_types_1d = tx_type.into_1d_types();
     let lossless = tx_type == TxType::WHT_WHT;
 
     // perform inv txfm on every row

@@ -143,28 +143,6 @@ pub fn av1_round_shift_array(arr: &mut [i32], size: usize, bit: i8) {
   }
 }
 
-const fn get_1d_tx_types(tx_type: TxType) -> (TxType1D, TxType1D) {
-  match tx_type {
-    TxType::DCT_DCT => (TxType1D::DCT, TxType1D::DCT),
-    TxType::ADST_DCT => (TxType1D::ADST, TxType1D::DCT),
-    TxType::DCT_ADST => (TxType1D::DCT, TxType1D::ADST),
-    TxType::ADST_ADST => (TxType1D::ADST, TxType1D::ADST),
-    TxType::FLIPADST_DCT => (TxType1D::FLIPADST, TxType1D::DCT),
-    TxType::DCT_FLIPADST => (TxType1D::DCT, TxType1D::FLIPADST),
-    TxType::FLIPADST_FLIPADST => (TxType1D::FLIPADST, TxType1D::FLIPADST),
-    TxType::ADST_FLIPADST => (TxType1D::ADST, TxType1D::FLIPADST),
-    TxType::FLIPADST_ADST => (TxType1D::FLIPADST, TxType1D::ADST),
-    TxType::IDTX => (TxType1D::IDTX, TxType1D::IDTX),
-    TxType::V_DCT => (TxType1D::DCT, TxType1D::IDTX),
-    TxType::H_DCT => (TxType1D::IDTX, TxType1D::DCT),
-    TxType::V_ADST => (TxType1D::ADST, TxType1D::IDTX),
-    TxType::H_ADST => (TxType1D::IDTX, TxType1D::ADST),
-    TxType::V_FLIPADST => (TxType1D::FLIPADST, TxType1D::IDTX),
-    TxType::H_FLIPADST => (TxType1D::IDTX, TxType1D::FLIPADST),
-    TxType::WHT_WHT => (TxType1D::WHT, TxType1D::WHT),
-  }
-}
-
 #[inline]
 pub const fn valid_av1_transform(tx_size: TxSize, tx_type: TxType) -> bool {
   let size_sq = tx_size.sqr_up();
