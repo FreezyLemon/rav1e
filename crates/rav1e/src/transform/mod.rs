@@ -13,6 +13,8 @@
 #[macro_use]
 pub mod forward_shared;
 
+pub use rav1e_tx::*;
+
 pub use self::forward::forward_transform;
 pub use self::inverse::inverse_transform_add;
 
@@ -49,150 +51,16 @@ pub mod consts {
   pub static INV_SQRT2: i32 = 2896; // 2^12 / sqrt(2)
 }
 
-pub const TX_TYPES: usize = 16;
-pub const TX_TYPES_PLUS_LL: usize = 17;
+pub trait TxSizeExt {
+  fn block_size(self) -> BlockSize;
 
-#[derive(Debug, Copy, Clone, PartialEq, PartialOrd, Eq, Ord)]
-pub enum TxType {
-  DCT_DCT = 0,   // DCT  in both horizontal and vertical
-  ADST_DCT = 1,  // ADST in vertical, DCT in horizontal
-  DCT_ADST = 2,  // DCT  in vertical, ADST in horizontal
-  ADST_ADST = 3, // ADST in both directions
-  FLIPADST_DCT = 4,
-  DCT_FLIPADST = 5,
-  FLIPADST_FLIPADST = 6,
-  ADST_FLIPADST = 7,
-  FLIPADST_ADST = 8,
-  IDTX = 9,
-  V_DCT = 10,
-  H_DCT = 11,
-  V_ADST = 12,
-  H_ADST = 13,
-  V_FLIPADST = 14,
-  H_FLIPADST = 15,
-  WHT_WHT = 16,
+  fn width_mi(self) -> usize;
+  fn height_mi(self) -> usize;
 }
 
-impl TxType {
-  /// Compute transform type for inter chroma.
-  ///
-  /// <https://aomediacodec.github.io/av1-spec/#compute-transform-type-function>
+impl TxSizeExt for TxSize {
   #[inline]
-  pub fn uv_inter(self, uv_tx_size: TxSize) -> Self {
-    use TxType::*;
-    if uv_tx_size.sqr_up() == TX_32X32 {
-      match self {
-        IDTX => IDTX,
-        _ => DCT_DCT,
-      }
-    } else if uv_tx_size.sqr() == TX_16X16 {
-      match self {
-        V_ADST | H_ADST | V_FLIPADST | H_FLIPADST => DCT_DCT,
-        _ => self,
-      }
-    } else {
-      self
-    }
-  }
-}
-
-/// Transform Size
-#[derive(Copy, Clone, Debug, PartialEq, PartialOrd, Eq, Ord)]
-pub enum TxSize {
-  TX_4X4,
-  TX_8X8,
-  TX_16X16,
-  TX_32X32,
-  TX_64X64,
-
-  TX_4X8,
-  TX_8X4,
-  TX_8X16,
-  TX_16X8,
-  TX_16X32,
-  TX_32X16,
-  TX_32X64,
-  TX_64X32,
-
-  TX_4X16,
-  TX_16X4,
-  TX_8X32,
-  TX_32X8,
-  TX_16X64,
-  TX_64X16,
-}
-
-impl TxSize {
-  /// Number of square transform sizes
-  pub const TX_SIZES: usize = 5;
-
-  /// Number of transform sizes (including non-square sizes)
-  pub const TX_SIZES_ALL: usize = 14 + 5;
-
-  #[inline]
-  pub const fn width(self) -> usize {
-    1 << self.width_log2()
-  }
-
-  #[inline]
-  pub const fn width_log2(self) -> usize {
-    match self {
-      TX_4X4 | TX_4X8 | TX_4X16 => 2,
-      TX_8X8 | TX_8X4 | TX_8X16 | TX_8X32 => 3,
-      TX_16X16 | TX_16X8 | TX_16X32 | TX_16X4 | TX_16X64 => 4,
-      TX_32X32 | TX_32X16 | TX_32X64 | TX_32X8 => 5,
-      TX_64X64 | TX_64X32 | TX_64X16 => 6,
-    }
-  }
-
-  #[inline]
-  pub const fn width_index(self) -> usize {
-    self.width_log2() - TX_4X4.width_log2()
-  }
-
-  #[inline]
-  pub const fn height(self) -> usize {
-    1 << self.height_log2()
-  }
-
-  #[inline]
-  pub const fn height_log2(self) -> usize {
-    match self {
-      TX_4X4 | TX_8X4 | TX_16X4 => 2,
-      TX_8X8 | TX_4X8 | TX_16X8 | TX_32X8 => 3,
-      TX_16X16 | TX_8X16 | TX_32X16 | TX_4X16 | TX_64X16 => 4,
-      TX_32X32 | TX_16X32 | TX_64X32 | TX_8X32 => 5,
-      TX_64X64 | TX_32X64 | TX_16X64 => 6,
-    }
-  }
-
-  #[inline]
-  pub const fn height_index(self) -> usize {
-    self.height_log2() - TX_4X4.height_log2()
-  }
-
-  #[inline]
-  pub const fn width_mi(self) -> usize {
-    self.width() >> MI_SIZE_LOG2
-  }
-
-  #[inline]
-  pub const fn area(self) -> usize {
-    1 << self.area_log2()
-  }
-
-  #[inline]
-  pub const fn area_log2(self) -> usize {
-    self.width_log2() + self.height_log2()
-  }
-
-  #[inline]
-  pub const fn height_mi(self) -> usize {
-    self.height() >> MI_SIZE_LOG2
-  }
-
-  #[inline]
-  pub const fn block_size(self) -> BlockSize {
+  fn block_size(self) -> BlockSize {
     match self {
       TX_4X4 => BLOCK_4X4,
       TX_8X8 => BLOCK_8X8,
@@ -217,74 +85,18 @@ impl TxSize {
   }
 
   #[inline]
-  pub const fn sqr(self) -> TxSize {
-    match self {
-      TX_4X4 | TX_4X8 | TX_8X4 | TX_4X16 | TX_16X4 => TX_4X4,
-      TX_8X8 | TX_8X16 | TX_16X8 | TX_8X32 | TX_32X8 => TX_8X8,
-      TX_16X16 | TX_16X32 | TX_32X16 | TX_16X64 | TX_64X16 => TX_16X16,
-      TX_32X32 | TX_32X64 | TX_64X32 => TX_32X32,
-      TX_64X64 => TX_64X64,
-    }
+  fn width_mi(self) -> usize {
+    self.width() >> MI_SIZE_LOG2
   }
 
   #[inline]
-  pub const fn sqr_up(self) -> TxSize {
-    match self {
-      TX_4X4 => TX_4X4,
-      TX_8X8 | TX_4X8 | TX_8X4 => TX_8X8,
-      TX_16X16 | TX_8X16 | TX_16X8 | TX_4X16 | TX_16X4 => TX_16X16,
-      TX_32X32 | TX_16X32 | TX_32X16 | TX_8X32 | TX_32X8 => TX_32X32,
-      TX_64X64 | TX_32X64 | TX_64X32 | TX_16X64 | TX_64X16 => TX_64X64,
-    }
-  }
-
-  #[inline]
-  pub fn by_dims(w: usize, h: usize) -> TxSize {
-    match (w, h) {
-      (4, 4) => TX_4X4,
-      (8, 8) => TX_8X8,
-      (16, 16) => TX_16X16,
-      (32, 32) => TX_32X32,
-      (64, 64) => TX_64X64,
-      (4, 8) => TX_4X8,
-      (8, 4) => TX_8X4,
-      (8, 16) => TX_8X16,
-      (16, 8) => TX_16X8,
-      (16, 32) => TX_16X32,
-      (32, 16) => TX_32X16,
-      (32, 64) => TX_32X64,
-      (64, 32) => TX_64X32,
-      (4, 16) => TX_4X16,
-      (16, 4) => TX_16X4,
-      (8, 32) => TX_8X32,
-      (32, 8) => TX_32X8,
-      (16, 64) => TX_16X64,
-      (64, 16) => TX_64X16,
-      _ => unreachable!(),
-    }
-  }
-
-  #[inline]
-  pub const fn is_rect(self) -> bool {
-    self.width_log2() != self.height_log2()
+  fn height_mi(self) -> usize {
+    self.height() >> MI_SIZE_LOG2
   }
 }
 
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd)]
-pub enum TxSet {
-  // DCT only
-  TX_SET_DCTONLY,
-  // DCT + Identity only
-  TX_SET_INTER_3, // TX_SET_DCT_IDTX
-  // Discrete Trig transforms w/o flip (4) + Identity (1)
-  TX_SET_INTRA_2, // TX_SET_DTT4_IDTX
-  // Discrete Trig transforms w/o flip (4) + Identity (1) + 1D Hor/vert DCT (2)
-  TX_SET_INTRA_1, // TX_SET_DTT4_IDTX_1DDCT
-  // Discrete Trig transforms w/ flip (9) + Identity (1) + 1D Hor/Ver DCT (2)
-  TX_SET_INTER_2, // TX_SET_DTT9_IDTX_1DDCT
-  // Discrete Trig transforms w/ flip (9) + Identity (1) + 1D Hor/Ver (6)
-  TX_SET_INTER_1, // TX_SET_ALL16
-}
+pub const TX_TYPES: usize = 16;
+pub const TX_TYPES_PLUS_LL: usize = 17;
 
 /// Utility function that returns the log of the ratio of the col and row sizes.
 #[inline]
@@ -331,15 +143,6 @@ pub fn av1_round_shift_array(arr: &mut [i32], size: usize, bit: i8) {
   }
 }
 
-#[derive(Debug, Clone, Copy)]
-enum TxType1D {
-  DCT,
-  ADST,
-  FLIPADST,
-  IDTX,
-  WHT,
-}
-
 const fn get_1d_tx_types(tx_type: TxType) -> (TxType1D, TxType1D) {
   match tx_type {
     TxType::DCT_DCT => (TxType1D::DCT, TxType1D::DCT),
@@ -361,46 +164,6 @@ const fn get_1d_tx_types(tx_type: TxType) -> (TxType1D, TxType1D) {
     TxType::WHT_WHT => (TxType1D::WHT, TxType1D::WHT),
   }
 }
-
-const VTX_TAB: [TxType1D; TX_TYPES_PLUS_LL] = [
-  TxType1D::DCT,
-  TxType1D::ADST,
-  TxType1D::DCT,
-  TxType1D::ADST,
-  TxType1D::FLIPADST,
-  TxType1D::DCT,
-  TxType1D::FLIPADST,
-  TxType1D::ADST,
-  TxType1D::FLIPADST,
-  TxType1D::IDTX,
-  TxType1D::DCT,
-  TxType1D::IDTX,
-  TxType1D::ADST,
-  TxType1D::IDTX,
-  TxType1D::FLIPADST,
-  TxType1D::IDTX,
-  TxType1D::WHT,
-];
-
-const HTX_TAB: [TxType1D; TX_TYPES_PLUS_LL] = [
-  TxType1D::DCT,
-  TxType1D::DCT,
-  TxType1D::ADST,
-  TxType1D::ADST,
-  TxType1D::DCT,
-  TxType1D::FLIPADST,
-  TxType1D::FLIPADST,
-  TxType1D::FLIPADST,
-  TxType1D::ADST,
-  TxType1D::IDTX,
-  TxType1D::IDTX,
-  TxType1D::DCT,
-  TxType1D::IDTX,
-  TxType1D::ADST,
-  TxType1D::IDTX,
-  TxType1D::FLIPADST,
-  TxType1D::WHT,
-];
 
 #[inline]
 pub const fn valid_av1_transform(tx_size: TxSize, tx_type: TxType) -> bool {

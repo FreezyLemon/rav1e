@@ -36,6 +36,7 @@ use crate::predict::{
 };
 use crate::rdo_tables::*;
 use crate::tiling::*;
+use crate::transform::TxSizeExt;
 use crate::transform::{TxSet, TxSize, TxType, RAV1E_TX_TYPES};
 use crate::util::{init_slice_repeat_mut, Aligned, Pixel};
 use crate::write_tx_blocks;

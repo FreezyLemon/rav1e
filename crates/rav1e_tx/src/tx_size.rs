@@ -1,3 +1,5 @@
+use std::ops::Index;
+
 use TxSize::*;
 
 #[derive(Copy, Clone, Debug, PartialEq, PartialOrd, Eq, Ord)]
@@ -74,12 +76,6 @@ impl TxSize {
     self.height_log2() - TX_4X4.height_log2()
   }
 
-  // TODO: Ext trait?
-  // #[inline]
-  // pub const fn width_mi(self) -> usize {
-  //   self.width() >> MI_SIZE_LOG2
-  // }
-
   #[inline]
   pub const fn area(self) -> usize {
     1 << self.area_log2()
@@ -89,37 +85,6 @@ impl TxSize {
   pub const fn area_log2(self) -> usize {
     self.width_log2() + self.height_log2()
   }
-
-  // TODO: Ext trait?
-  // #[inline]
-  // pub const fn height_mi(self) -> usize {
-  //   self.height() >> MI_SIZE_LOG2
-  // }
-
-  // #[inline]
-  // pub const fn block_size(self) -> BlockSize {
-  //   match self {
-  //     TX_4X4 => BLOCK_4X4,
-  //     TX_8X8 => BLOCK_8X8,
-  //     TX_16X16 => BLOCK_16X16,
-  //     TX_32X32 => BLOCK_32X32,
-  //     TX_64X64 => BLOCK_64X64,
-  //     TX_4X8 => BLOCK_4X8,
-  //     TX_8X4 => BLOCK_8X4,
-  //     TX_8X16 => BLOCK_8X16,
-  //     TX_16X8 => BLOCK_16X8,
-  //     TX_16X32 => BLOCK_16X32,
-  //     TX_32X16 => BLOCK_32X16,
-  //     TX_32X64 => BLOCK_32X64,
-  //     TX_64X32 => BLOCK_64X32,
-  //     TX_4X16 => BLOCK_4X16,
-  //     TX_16X4 => BLOCK_16X4,
-  //     TX_8X32 => BLOCK_8X32,
-  //     TX_32X8 => BLOCK_32X8,
-  //     TX_16X64 => BLOCK_16X64,
-  //     TX_64X16 => BLOCK_64X16,
-  //   }
-  // }
 
   #[inline]
   pub const fn sqr(self) -> TxSize {
@@ -172,5 +137,14 @@ impl TxSize {
   #[inline]
   pub const fn is_rect(self) -> bool {
     self.width_log2() != self.height_log2()
+  }
+}
+
+impl<T> Index<TxSize> for [T; TxSize::TX_SIZES_ALL] {
+  type Output = T;
+  #[inline]
+  fn index(&self, tx_size: TxSize) -> &Self::Output {
+    // SAFETY: values of TxSize are < TX_SIZES_ALL
+    unsafe { self.get_unchecked(tx_size as usize) }
   }
 }

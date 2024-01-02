@@ -1304,6 +1304,7 @@ dependencies = [
  "rand_chacha",
  "rav1e_asm_aarch64",
  "rav1e_asm_x86",
+ "rav1e_tx",
  "scan_fmt",
  "semver",
  "serde",

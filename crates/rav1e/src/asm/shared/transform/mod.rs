@@ -9,33 +9,3 @@
 
 pub mod forward;
 pub mod inverse;
-
-use crate::transform::*;
-use std::ops::Index;
-
-impl<T> Index<TxSize> for [T; TxSize::TX_SIZES_ALL] {
-  type Output = T;
-  #[inline]
-  fn index(&self, tx_size: TxSize) -> &Self::Output {
-    // SAFETY: values of TxSize are < TX_SIZES_ALL
-    unsafe { self.get_unchecked(tx_size as usize) }
-  }
-}
-
-impl<T> Index<TxType> for [T; TX_TYPES] {
-  type Output = T;
-  #[inline]
-  fn index(&self, tx_type: TxType) -> &Self::Output {
-    // SAFETY: Wraps WHT_WHT to DCT_DCT
-    unsafe { self.get_unchecked((tx_type as usize) & 15) }
-  }
-}
-
-impl<T> Index<TxType> for [T; TX_TYPES_PLUS_LL] {
-  type Output = T;
-  #[inline]
-  fn index(&self, tx_type: TxType) -> &Self::Output {
-    // SAFETY: values of TxType are < TX_TYPES_PLUS_LL
-    unsafe { self.get_unchecked(tx_type as usize) }
-  }
-}

@@ -1,3 +1,5 @@
+use std::ops::Index;
+
 use crate::TxSize;
 
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd, Eq, Ord)]
@@ -41,5 +43,26 @@ impl TxType {
     } else {
       self
     }
+  }
+}
+
+pub const TX_TYPES: usize = 16;
+pub const TX_TYPES_PLUS_LL: usize = 17;
+
+impl<T> Index<TxType> for [T; TX_TYPES] {
+  type Output = T;
+  #[inline]
+  fn index(&self, tx_type: TxType) -> &Self::Output {
+    // SAFETY: Wraps WHT_WHT to DCT_DCT
+    unsafe { self.get_unchecked((tx_type as usize) & 15) }
+  }
+}
+
+impl<T> Index<TxType> for [T; TX_TYPES_PLUS_LL] {
+  type Output = T;
+  #[inline]
+  fn index(&self, tx_type: TxType) -> &Self::Output {
+    // SAFETY: values of TxType are < TX_TYPES_PLUS_LL
+    unsafe { self.get_unchecked(tx_type as usize) }
   }
 }

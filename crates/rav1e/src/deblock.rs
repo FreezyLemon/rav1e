@@ -15,6 +15,7 @@ use crate::partition::RefType::*;
 use crate::predict::PredictionMode::*;
 use crate::quantize::*;
 use crate::tiling::*;
+use crate::transform::TxSizeExt;
 use crate::util::{clamp, ILog, Pixel};
 use crate::DeblockState;
 use rayon::iter::*;
