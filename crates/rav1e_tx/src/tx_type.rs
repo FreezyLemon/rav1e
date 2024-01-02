@@ -66,6 +66,22 @@ impl TxType {
       TxType::WHT_WHT => (TxType1D::WHT, TxType1D::WHT),
     }
   }
+
+  #[inline]
+  pub const fn valid_for_size(self, tx_size: TxSize) -> bool {
+    use TxType::*;
+    use TxSize::*;
+
+    let size_sq = tx_size.sqr_up();
+    match (size_sq, self) {
+      (TX_64X64, DCT_DCT) => true,
+      (TX_64X64, _) => false,
+      (TX_32X32, DCT_DCT) => true,
+      (TX_32X32, IDTX) => true,
+      (TX_32X32, _) => false,
+      (_, _) => true,
+    }
+  }
 }
 
 pub const TX_TYPES: usize = 16;

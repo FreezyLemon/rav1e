@@ -445,7 +445,7 @@ pub fn forward_transform<T: Coefficient>(
   input: &[i16], output: &mut [MaybeUninit<T>], stride: usize,
   tx_size: TxSize, tx_type: TxType, bd: usize, cpu: CpuFeatureLevel,
 ) {
-  assert!(valid_av1_transform(tx_size, tx_type));
+  assert!(tx_type.valid_for_size(tx_size));
   if cpu >= CpuFeatureLevel::AVX2 {
     // SAFETY: Calls Assembly code.
     unsafe {

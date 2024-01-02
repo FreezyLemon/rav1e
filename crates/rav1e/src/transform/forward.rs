@@ -27,7 +27,7 @@ pub mod rust {
   use std::mem::MaybeUninit;
 
   use crate::transform::forward_shared::*;
-  use crate::transform::{av1_round_shift_array, valid_av1_transform, TxSize};
+  use crate::transform::{av1_round_shift_array, TxSize};
   use simd_helpers::cold_for_target_arch;
 
   type TxfmFunc = fn(&mut [i32]);
@@ -72,7 +72,7 @@ pub mod rust {
     input: &[i16], output: &mut [MaybeUninit<T>], stride: usize,
     tx_size: TxSize, tx_type: TxType, bd: usize, _cpu: CpuFeatureLevel,
   ) {
-    assert!(valid_av1_transform(tx_size, tx_type));
+    assert!(tx_type.valid_for_size(tx_size));
 
     // Note when assigning txfm_size_col, we use the txfm_size from the
     // row configuration and vice versa. This is intentionally done to
