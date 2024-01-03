@@ -1,0 +1,9 @@
+[package]
+name = "rav1e_partitioning"
+version = "0.0.0"
+edition = "2021"
+
+[dependencies]
+rav1e_tx = { version = "0.0.0", path = "../rav1e_tx" }
+thiserror = "1.0.56"
+v_frame = "0.3.7"
