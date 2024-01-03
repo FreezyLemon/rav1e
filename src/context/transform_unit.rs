@@ -57,31 +57,6 @@ pub static av1_tx_ind: [[usize; TX_TYPES]; TX_SETS] = [
   [7, 8, 9, 12, 10, 11, 13, 14, 15, 0, 1, 2, 3, 4, 5, 6],
 ];
 
-pub static max_txsize_rect_lookup: [TxSize; BlockSize::BLOCK_SIZES_ALL] = [
-  TX_4X4,   // 4x4
-  TX_4X8,   // 4x8
-  TX_8X4,   // 8x4
-  TX_8X8,   // 8x8
-  TX_8X16,  // 8x16
-  TX_16X8,  // 16x8
-  TX_16X16, // 16x16
-  TX_16X32, // 16x32
-  TX_32X16, // 32x16
-  TX_32X32, // 32x32
-  TX_32X64, // 32x64
-  TX_64X32, // 64x32
-  TX_64X64, // 64x64
-  TX_64X64, // 64x128
-  TX_64X64, // 128x64
-  TX_64X64, // 128x128
-  TX_4X16,  // 4x16
-  TX_16X4,  // 16x4
-  TX_8X32,  // 8x32
-  TX_32X8,  // 32x8
-  TX_16X64, // 16x64
-  TX_64X16, // 64x16
-];
-
 pub static sub_tx_size_map: [TxSize; TxSize::TX_SIZES_ALL] = [
   TX_4X4,   // TX_4X4
   TX_4X4,   // TX_8X8
@@ -576,7 +551,7 @@ impl<'a> ContextWriter<'a> {
   fn get_tx_size_context(
     &self, bo: TileBlockOffset, bsize: BlockSize,
   ) -> usize {
-    let max_tx_size = max_txsize_rect_lookup[bsize as usize];
+    let max_tx_size = bsize.tx_size();
     let max_tx_wide = max_tx_size.width() as u8;
     let max_tx_high = max_tx_size.height() as u8;
     let has_above = bo.0.y > 0;
@@ -613,7 +588,7 @@ impl<'a> ContextWriter<'a> {
     tx_size: TxSize,
   ) {
     fn tx_size_to_depth(tx_size: TxSize, bsize: BlockSize) -> usize {
-      let mut ctx_size = max_txsize_rect_lookup[bsize as usize];
+      let mut ctx_size = bsize.tx_size();
       let mut depth: usize = 0;
       while tx_size != ctx_size {
         depth += 1;
@@ -623,7 +598,7 @@ impl<'a> ContextWriter<'a> {
       depth
     }
     fn bsize_to_max_depth(bsize: BlockSize) -> usize {
-      let mut tx_size: TxSize = max_txsize_rect_lookup[bsize as usize];
+      let mut tx_size: TxSize = bsize.tx_size();
       let mut depth = 0;
       while depth < MAX_TX_DEPTH && tx_size != TX_4X4 {
         depth += 1;
@@ -633,7 +608,7 @@ impl<'a> ContextWriter<'a> {
       depth
     }
     fn bsize_to_tx_size_cat(bsize: BlockSize) -> usize {
-      let mut tx_size: TxSize = max_txsize_rect_lookup[bsize as usize];
+      let mut tx_size: TxSize = bsize.tx_size();
       debug_assert!(tx_size != TX_4X4);
       let mut depth = 0;
       while tx_size != TX_4X4 {

@@ -2142,7 +2142,7 @@ pub fn encode_block_post_cdef<T: Pixel, W: Writer>(
         debug_assert!(bsize > BlockSize::BLOCK_4X4);
         debug_assert!(is_inter);
         debug_assert!(!skip);
-        let max_tx_size = max_txsize_rect_lookup[bsize as usize];
+        let max_tx_size = bsize.tx_size();
         debug_assert!(max_tx_size.block_size() <= BlockSize::BLOCK_64X64);
 
         //TODO: "&& tx_size.block_size() < bsize" will be replaced with tx-split info for a partition
@@ -2490,7 +2490,7 @@ pub fn write_tx_tree<T: Pixel, W: Writer>(
     fi.sequence.chroma_sampling
   ));
 
-  let max_tx_size = max_txsize_rect_lookup[bsize as usize];
+  let max_tx_size = bsize.tx_size();
   debug_assert!(max_tx_size.block_size() <= BlockSize::BLOCK_64X64);
   let uv_tx_size = bsize.largest_chroma_tx_size(xdec, ydec);
 

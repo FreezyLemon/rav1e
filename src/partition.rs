@@ -392,7 +392,7 @@ impl BlockSize {
       .subsampled_size(xdec, ydec)
       .expect("invalid block size for this subsampling mode");
 
-    let chroma_tx_size = max_txsize_rect_lookup[plane_bsize as usize];
+    let chroma_tx_size = plane_bsize.tx_size();
 
     av1_get_coded_tx_size(chroma_tx_size)
   }
