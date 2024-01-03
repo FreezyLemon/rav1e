@@ -1,3 +1,56 @@
+use rav1e_tx::{TxSize, TxType, TX_TYPES_PLUS_LL};
+
+// FIXME: Create a asm_shared crate for things like this?
+// Note: Input coeffs are mutable since the assembly uses them as a scratchpad
+pub type InvTxfmFunc =
+  unsafe extern fn(*mut u8, libc::ptrdiff_t, *mut i16, i32);
+
+pub type InvTxfmHBDFunc =
+  unsafe extern fn(*mut u16, libc::ptrdiff_t, *mut i16, i32, i32);
+
+const fn merge_hbd_fns(
+  a: [[Option<InvTxfmHBDFunc>; TX_TYPES_PLUS_LL]; TxSize::TX_SIZES_ALL],
+  b: [[Option<InvTxfmHBDFunc>; TX_TYPES_PLUS_LL]; TxSize::TX_SIZES_ALL],
+) -> [[Option<InvTxfmHBDFunc>; TX_TYPES_PLUS_LL]; TxSize::TX_SIZES_ALL] {
+  let mut out = b;
+  let mut tx_size = 0;
+  loop {
+    let mut tx_type = 0;
+    loop {
+      if a[tx_size][tx_type].is_some() {
+        out[tx_size][tx_type] = a[tx_size][tx_type];
+      }
+      tx_type += 1;
+      if tx_type == TX_TYPES_PLUS_LL {
+        break;
+      }
+    }
+    tx_size += 1;
+    if tx_size == TxSize::TX_SIZES_ALL {
+      break;
+    }
+  }
+  out
+}
+
+pub const INV_TXFM_HBD_FNS_10_SSE2: [[Option<InvTxfmHBDFunc>;
+  TX_TYPES_PLUS_LL];
+  TxSize::TX_SIZES_ALL] = INV_TXFM_HBD_FNS_16_SSE2;
+
+pub const INV_TXFM_HBD_FNS_12_SSE2: [[Option<InvTxfmHBDFunc>;
+  TX_TYPES_PLUS_LL];
+  TxSize::TX_SIZES_ALL] = INV_TXFM_HBD_FNS_16_SSE2;
+
+pub const INV_TXFM_HBD_FNS_10_AVX2: [[Option<InvTxfmHBDFunc>;
+  TX_TYPES_PLUS_LL];
+  TxSize::TX_SIZES_ALL] =
+  merge_hbd_fns(INV_TXFM_HBD_FNS_10__AVX2, INV_TXFM_HBD_FNS_16_AVX2);
+
+pub const INV_TXFM_HBD_FNS_12_AVX2: [[Option<InvTxfmHBDFunc>;
+  TX_TYPES_PLUS_LL];
+  TxSize::TX_SIZES_ALL] =
+  merge_hbd_fns(INV_TXFM_HBD_FNS_12__AVX2, INV_TXFM_HBD_FNS_16_AVX2);
+
 macro_rules! decl_itx_fns {
   // Takes a 2d list of tx types for W and H
   ([$([$(($ENUM:expr, $TYPE1:ident, $TYPE2:ident)),*]),*], $W:expr, $H:expr,
@@ -15,7 +68,44 @@ macro_rules! decl_itx_fns {
           }
         )*
       )*
+
+      // Create a lookup table for the tx types declared above
+      pub const [<INV_TXFM_FNS_$W _$H _$OPT_UPPER>]: [Option<InvTxfmFunc>; TX_TYPES_PLUS_LL] = {
+        let mut out: [Option<InvTxfmFunc>; TX_TYPES_PLUS_LL] = [None; TX_TYPES_PLUS_LL];
+        $(
+          $(
+            out[$ENUM as usize] = Some([<rav1e_inv_txfm_add_$TYPE2 _$TYPE1 _$W x $H _8bpc_$OPT_LOWER>]);
+          )*
+        )*
+        out
+      };
     }
+  };
+}
+
+macro_rules! create_wxh_tables {
+  // Create a lookup table for each cpu feature
+  ([$([$(($W:expr, $H:expr)),*]),*], $OPT_LOWER:ident, $OPT_UPPER:ident) => {
+    paste::item! {
+      pub const [<INV_TXFM_FNS_$OPT_UPPER>]: [[Option<InvTxfmFunc>; TX_TYPES_PLUS_LL]; TxSize::TX_SIZES_ALL] = {
+        let mut out: [[Option<InvTxfmFunc>; TX_TYPES_PLUS_LL]; TxSize::TX_SIZES_ALL] =
+          [[None; TX_TYPES_PLUS_LL]; TxSize::TX_SIZES_ALL];
+        // For each dimension, add an entry to the table
+        $(
+          $(
+            out[TxSize::[<TX_ $W X $H>] as usize] = [<INV_TXFM_FNS_$W _$H _$OPT_UPPER>];
+          )*
+        )*
+        out
+      };
+    }
+  };
+
+  // Loop through cpu features
+  ($DIMS:tt, [$(($OPT_LOWER:ident, $OPT_UPPER:ident)),+]) => {
+    $(
+      create_wxh_tables!($DIMS, $OPT_LOWER, $OPT_UPPER);
+    )*
   };
 }
 
@@ -45,6 +135,12 @@ macro_rules! impl_itx_fns {
     );
     impl_itx_fns!(
       [$TYPES64, $TYPES32, $TYPES16, $TYPES84, $TYPES4], $DIMS4, $OPT
+    );
+
+    // Pool all of the dimensions together to create a table for each cpu
+    // feature level.
+    create_wxh_tables!(
+      [$DIMS64, $DIMS32, $DIMS16, $DIMS84, $DIMS4], $OPT
     );
   };
 }
@@ -155,7 +251,45 @@ macro_rules! decl_itx_hbd_fns {
           }
         )*
       )*
+
+      // Create a lookup table for the tx types declared above
+      pub const [<INV_TXFM_HBD_FNS_$W _$H _$BPC _$OPT_UPPER>]: [Option<InvTxfmHBDFunc>; TX_TYPES_PLUS_LL] = {
+        #[allow(unused_mut)]
+        let mut out: [Option<InvTxfmHBDFunc>; TX_TYPES_PLUS_LL] = [None; TX_TYPES_PLUS_LL];
+        $(
+          $(
+            out[$ENUM as usize] = Some([<rav1e_inv_txfm_add_$TYPE2 _$TYPE1 _$W x $H _ $BPC bpc_$OPT_LOWER>]);
+          )*
+        )*
+        out
+      };
     }
+  };
+}
+
+macro_rules! create_wxh_hbd_tables {
+  // Create a lookup table for each cpu feature
+  ([$([$(($W:expr, $H:expr)),*]),*], $EXT:ident, $BPC:expr, $OPT_LOWER:ident, $OPT_UPPER:ident) => {
+    paste::item! {
+      pub const [<INV_TXFM_HBD_FNS $EXT _$OPT_UPPER>]: [[Option<InvTxfmHBDFunc>; TX_TYPES_PLUS_LL]; TxSize::TX_SIZES_ALL] = {
+        let mut out: [[Option<InvTxfmHBDFunc>; TX_TYPES_PLUS_LL]; TxSize::TX_SIZES_ALL] =
+          [[None; TX_TYPES_PLUS_LL]; TxSize::TX_SIZES_ALL];
+        // For each dimension, add an entry to the table
+        $(
+          $(
+            out[TxSize::[<TX_ $W X $H>] as usize] = [<INV_TXFM_HBD_FNS_$W _$H _$BPC _$OPT_UPPER>];
+          )*
+        )*
+        out
+      };
+    }
+  };
+
+  // Loop through cpu features
+  ($DIMS:tt, $EXT:ident, [$(($BPC:expr, $OPT_LOWER:ident, $OPT_UPPER:ident)),+]) => {
+    $(
+      create_wxh_hbd_tables!($DIMS, $EXT, $BPC, $OPT_LOWER, $OPT_UPPER);
+    )*
   };
 }
 
@@ -186,6 +320,12 @@ macro_rules! impl_itx_hbd_fns {
     );
     impl_itx_hbd_fns!(
       [$TYPES64, $TYPES32, $TYPES16, $TYPES84, $TYPES4], $DIMS4, $OPT
+    );
+
+    // Pool all of the dimensions together to create a table for each cpu
+    // feature level.
+    create_wxh_hbd_tables!(
+      [$DIMS64, $DIMS32, $DIMS16, $DIMS84, $DIMS4], $EXT, $OPT
     );
   };
 }

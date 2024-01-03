@@ -1339,6 +1339,7 @@ dependencies = [
  "libc",
  "nasm-rs",
  "paste",
+ "rav1e_tx",
 ]
 
 [[package]]

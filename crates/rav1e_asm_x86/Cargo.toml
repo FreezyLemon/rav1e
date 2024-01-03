@@ -8,6 +8,7 @@ rust-version = "1.70.0"
 [dependencies]
 libc = "0.2"
 paste = "1.0"
+rav1e_tx = { path = "../rav1e_tx" }
 
 [build-dependencies]
 cc = { version = "1.0", features = ["parallel"] }

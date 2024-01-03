@@ -69,8 +69,8 @@ impl TxType {
 
   #[inline]
   pub const fn valid_for_size(self, tx_size: TxSize) -> bool {
-    use TxType::*;
     use TxSize::*;
+    use TxType::*;
 
     let size_sq = tx_size.sqr_up();
     match (size_sq, self) {
