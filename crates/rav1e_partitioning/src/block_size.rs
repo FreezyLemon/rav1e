@@ -10,7 +10,7 @@ use thiserror::Error;
 use BlockSize::*;
 use TxSize::*;
 
-use crate::PartitionType;
+use crate::{PartitionType, MI_SIZE_LOG2, IMPORTANCE_BLOCK_TO_BLOCK_SHIFT, BLOCK_TO_PLANE_SHIFT};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum BlockSize {
@@ -69,6 +69,31 @@ impl Default for BlockSize {
     BlockSize::BLOCK_64X64
   }
 }
+
+pub static MAX_TXSIZE_RECT_LOOKUP: [TxSize; BlockSize::BLOCK_SIZES_ALL] = [
+  TX_4X4,   // 4x4
+  TX_4X8,   // 4x8
+  TX_8X4,   // 8x4
+  TX_8X8,   // 8x8
+  TX_8X16,  // 8x16
+  TX_16X8,  // 16x8
+  TX_16X16, // 16x16
+  TX_16X32, // 16x32
+  TX_32X16, // 32x16
+  TX_32X32, // 32x32
+  TX_32X64, // 32x64
+  TX_64X32, // 64x32
+  TX_64X64, // 64x64
+  TX_64X64, // 64x128
+  TX_64X64, // 128x64
+  TX_64X64, // 128x128
+  TX_4X16,  // 4x16
+  TX_16X4,  // 16x4
+  TX_8X32,  // 8x32
+  TX_32X8,  // 32x8
+  TX_16X64, // 16x64
+  TX_64X16, // 64x16
+];
 
 impl BlockSize {
   pub const BLOCK_SIZES_ALL: usize = 22;
@@ -279,7 +304,7 @@ impl BlockSize {
       .subsampled_size(xdec, ydec)
       .expect("invalid block size for this subsampling mode");
 
-    let chroma_tx_size = max_txsize_rect_lookup[plane_bsize as usize];
+    let chroma_tx_size = MAX_TXSIZE_RECT_LOOKUP[plane_bsize as usize];
 
     av1_get_coded_tx_size(chroma_tx_size)
   }
