@@ -1506,7 +1506,7 @@ pub fn encode_tx_block<T: Pixel, W: Writer>(
     return (false, ScaledDistortion::zero());
   }
 
-  let coded_tx_area = av1_get_coded_tx_size(tx_size).area();
+  let coded_tx_area = tx_size.coded_tx_size().area();
   let mut residual = Aligned::<[MaybeUninit<i16>; 64 * 64]>::uninit_array();
   let mut coeffs = Aligned::<[MaybeUninit<T::Coeff>; 64 * 64]>::uninit_array();
   let mut qcoeffs =

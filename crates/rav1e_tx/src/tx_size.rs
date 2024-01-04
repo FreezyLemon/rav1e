@@ -138,6 +138,16 @@ impl TxSize {
   pub const fn is_rect(self) -> bool {
     self.width_log2() != self.height_log2()
   }
+
+  #[inline]
+  pub const fn coded_tx_size(self) -> Self {
+    match self {
+      TX_64X64 | TX_64X32 | TX_32X64 => TX_32X32,
+      TX_16X64 => TX_16X32,
+      TX_64X16 => TX_32X16,
+      _ => self,
+    }
+  }
 }
 
 impl<T> Index<TxSize> for [T; TxSize::TX_SIZES_ALL] {

@@ -12,7 +12,6 @@ use std::arch::x86::*;
 #[cfg(target_arch = "x86_64")]
 use std::arch::x86_64::*;
 
-use crate::context::av1_get_coded_tx_size;
 use crate::cpu_features::CpuFeatureLevel;
 use crate::quantize::*;
 use crate::transform::TxSize;
@@ -51,7 +50,7 @@ pub fn dequantize<T: Coefficient>(
 
   #[cfg(any(feature = "check_asm", test))]
   let mut ref_rcoeffs = {
-    let area = av1_get_coded_tx_size(tx_size).area();
+    let area = tx_size.coded_tx_size().area();
     let mut copy = vec![MaybeUninit::new(T::cast_from(0)); area];
     call_rust(&mut copy);
     copy
@@ -82,7 +81,7 @@ pub fn dequantize<T: Coefficient>(
 
   #[cfg(any(feature = "check_asm", test))]
   {
-    let area = av1_get_coded_tx_size(tx_size).area();
+    let area = tx_size.coded_tx_size().area();
     let rcoeffs = unsafe { slice_assume_init_mut(&mut rcoeffs[..area]) };
     let ref_rcoeffs = unsafe { slice_assume_init_mut(&mut ref_rcoeffs[..]) };
     assert_eq!(rcoeffs, ref_rcoeffs);
@@ -105,7 +104,7 @@ unsafe fn dequantize_avx2(
     0,
   );
 
-  let area: usize = av1_get_coded_tx_size(tx_size).area();
+  let area: usize = tx_size.coded_tx_size().area();
   // Step by 16 (256/16) coefficients for each iteration
   let step: usize = 16;
   assert!(area >= step);
@@ -182,7 +181,7 @@ mod test {
       // Test the min, max, and random eobs
       let eobs = {
         let mut out = [0u16; 16];
-        let area: usize = av1_get_coded_tx_size(tx_size).area();
+        let area: usize = tx_size.coded_tx_size().area();
         out[0] = 0;
         out[1] = area as u16;
         for eob in out.iter_mut().skip(2) {

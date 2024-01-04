@@ -306,7 +306,7 @@ impl BlockSize {
 
     let chroma_tx_size = MAX_TXSIZE_RECT_LOOKUP[plane_bsize as usize];
 
-    av1_get_coded_tx_size(chroma_tx_size)
+    chroma_tx_size.coded_tx_size()
   }
 
   #[inline]

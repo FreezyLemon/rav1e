@@ -197,7 +197,6 @@ pub fn get_valid_txfm_types(tx_size: TxSize) -> &'static [TxType] {
 mod test {
   use super::TxType::*;
   use super::*;
-  use crate::context::av1_get_coded_tx_size;
   use crate::cpu_features::CpuFeatureLevel;
   use crate::frame::*;
   use rand::random;
@@ -208,7 +207,7 @@ mod test {
   ) {
     let cpu = CpuFeatureLevel::default();
 
-    let coeff_area: usize = av1_get_coded_tx_size(tx_size).area();
+    let coeff_area: usize = tx_size.coded_tx_size().area();
     let mut src_storage = [T::cast_from(0); 64 * 64];
     let src = &mut src_storage[..tx_size.area()];
     let mut dst = Plane::from_slice(

@@ -91,16 +91,6 @@ impl FieldMap {
   }
 }
 
-#[inline]
-pub const fn av1_get_coded_tx_size(tx_size: TxSize) -> TxSize {
-  match tx_size {
-    TX_64X64 | TX_64X32 | TX_32X64 => TX_32X32,
-    TX_16X64 => TX_16X32,
-    TX_64X16 => TX_32X16,
-    _ => tx_size,
-  }
-}
-
 /* Symbols for coding magnitude class of nonzero components */
 const MV_CLASSES: usize = 11;
 

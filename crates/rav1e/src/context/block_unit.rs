@@ -1647,7 +1647,7 @@ impl<'a> ContextWriter<'a> {
     // Note: Both intra and inter mode uses inter scan order. Surprised?
     let scan: &[u16] = &av1_scan_orders[tx_size as usize][tx_type as usize]
       .scan[..usize::from(eob)];
-    let height = av1_get_coded_tx_size(tx_size).height();
+    let height = tx_size.coded_tx_size().height();
 
     // Create a slice with coeffs in scan order
     let mut coeffs_storage: Aligned<ArrayVec<T, { 32 * 32 }>> =

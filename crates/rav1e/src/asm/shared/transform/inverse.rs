@@ -79,7 +79,6 @@ pub fn call_inverse_hbd_func<T: Pixel>(
 #[cfg(test)]
 pub mod test {
   use super::*;
-  use crate::context::av1_get_coded_tx_size;
   use crate::cpu_features::CpuFeatureLevel;
   use crate::frame::{AsRegion, Plane};
   use crate::scan_order::av1_scan_orders;
@@ -97,7 +96,7 @@ pub mod test {
      * dimensions are non-zero. This leads to braching to specific optimized
      * simd versions (e.g. dc-only) so that we get full asm coverage in this
      * test */
-    let coeff_h = av1_get_coded_tx_size(tx_size).height();
+    let coeff_h = tx_size.coded_tx_size().height();
     let sub_high: usize = if sub_h > 0 { sub_h * 8 - 1 } else { 0 };
     let sub_low: usize = if sub_h > 1 { sub_high - 8 } else { 0 };
     let mut eob = 0u16;

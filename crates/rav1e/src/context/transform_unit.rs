@@ -771,7 +771,7 @@ impl<'a> ContextWriter<'a> {
   // of block width.
   #[inline]
   pub const fn get_txb_bhl(tx_size: TxSize) -> usize {
-    av1_get_coded_tx_size(tx_size).height_log2()
+    tx_size.coded_tx_size().height_log2()
   }
 
   /// Returns `(eob_pt, eob_extra)`
@@ -888,7 +888,7 @@ impl<'a> ContextWriter<'a> {
     tx_class: TxClass, coeff_contexts_no_scan: &'c mut [MaybeUninit<i8>],
   ) -> &'c mut [i8] {
     let bhl = Self::get_txb_bhl(tx_size);
-    let area = av1_get_coded_tx_size(tx_size).area();
+    let area = tx_size.coded_tx_size().area();
 
     let scan = &scan[..usize::from(eob)];
     let coeffs = &mut coeff_contexts_no_scan[..usize::from(eob)];
