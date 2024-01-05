@@ -12,7 +12,7 @@ use TxSize::*;
 #[cfg(feature = "serialize")]
 use serde::{Serialize, Deserialize};
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Default)]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 pub enum BlockSize {
   BLOCK_4X4,
@@ -27,6 +27,7 @@ pub enum BlockSize {
   BLOCK_32X32,
   BLOCK_32X64,
   BLOCK_64X32,
+  #[default]
   BLOCK_64X64,
   BLOCK_64X128,
   BLOCK_128X64,
@@ -61,13 +62,6 @@ impl PartialOrd for BlockSize {
       (Greater, _) | (_, Greater) => Some(Greater),
       (Less, _) | (_, Less) => Some(Less),
     }
-  }
-}
-
-#[cfg(test)]
-impl Default for BlockSize {
-  fn default() -> Self {
-    BlockSize::BLOCK_64X64
   }
 }
 
