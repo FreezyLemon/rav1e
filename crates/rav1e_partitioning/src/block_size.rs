@@ -10,7 +10,7 @@ use BlockSize::*;
 use TxSize::*;
 
 #[cfg(feature = "serialize")]
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Default)]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
