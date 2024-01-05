@@ -1348,6 +1348,7 @@ name = "rav1e_partitioning"
 version = "0.0.0"
 dependencies = [
  "rav1e_tx",
+ "serde",
  "thiserror",
  "v_frame",
 ]

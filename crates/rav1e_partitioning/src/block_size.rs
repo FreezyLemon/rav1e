@@ -1,18 +1,19 @@
 #![allow(non_camel_case_types)]
 
-// TODO handle serde stuff
-
 use std::fmt;
 
 use rav1e_tx::TxSize;
 use thiserror::Error;
 
+use crate::*;
 use BlockSize::*;
 use TxSize::*;
 
-use crate::{PartitionType, MI_SIZE_LOG2, IMPORTANCE_BLOCK_TO_BLOCK_SHIFT, BLOCK_TO_PLANE_SHIFT};
+#[cfg(feature = "serialize")]
+use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 pub enum BlockSize {
   BLOCK_4X4,
   BLOCK_4X8,

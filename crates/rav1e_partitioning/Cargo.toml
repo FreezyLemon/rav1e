@@ -7,3 +7,7 @@ edition = "2021"
 rav1e_tx = { version = "0.0.0", path = "../rav1e_tx" }
 thiserror = "1.0.56"
 v_frame = "0.3.7"
+serde = { version = "1", features = ["derive"], optional = true }
+
+[features]
+serialize = ["dep:serde"]

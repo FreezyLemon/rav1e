@@ -58,10 +58,11 @@ tracing = [
 scenechange = []
 serialize = [
   "serde",
+  "serde-big-array",
   "toml",
- "v_frame/serialize",
- "serde-big-array",
- "av1-grain/serialize"
+  "v_frame/serialize",
+  "rav1e_partitioning/serialize",
+  "av1-grain/serialize",
 ]
 wasm = ["wasm-bindgen"]
 
