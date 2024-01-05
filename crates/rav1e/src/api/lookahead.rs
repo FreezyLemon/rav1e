@@ -1,6 +1,6 @@
 use crate::api::internal::InterConfig;
 use crate::config::EncoderConfig;
-use crate::context::{BlockOffset, FrameBlocks, TileBlockOffset};
+use crate::context::FrameBlocks;
 use crate::cpu_features::CpuFeatureLevel;
 use crate::dist::get_satd;
 use crate::encoder::{
@@ -8,12 +8,13 @@ use crate::encoder::{
 };
 use crate::frame::{AsRegion, PlaneOffset};
 use crate::me::{estimate_tile_motion, RefMEStats};
-use crate::partition::{get_intra_edges, BlockSize};
+use crate::partition::get_intra_edges;
 use crate::predict::{IntraParam, PredictionMode};
 use crate::tiling::{Area, PlaneRegion, TileRect};
 use crate::transform::TxSize;
 use crate::util::Aligned;
 use crate::Pixel;
+use rav1e_partitioning::{BlockOffset, BlockSize, TileBlockOffset};
 use rayon::iter::*;
 use std::sync::Arc;
 use v_frame::frame::Frame;

@@ -17,13 +17,13 @@ cfg_if::cfg_if! {
 
 use crate::api::SGRComplexityLevel;
 use crate::color::ChromaSampling::Cs400;
-use crate::context::{MAX_PLANES, SB_SIZE};
 use crate::encoder::FrameInvariants;
 use crate::frame::{
   AsRegion, Frame, Plane, PlaneConfig, PlaneOffset, PlaneSlice,
 };
 use crate::tiling::{Area, PlaneRegion, PlaneRegionMut, Rect};
 use crate::util::{clamp, CastFromPrimitive, ILog, Pixel};
+use rav1e_partitioning::*;
 use std::cmp;
 use std::iter::FusedIterator;
 use std::ops::{Index, IndexMut};

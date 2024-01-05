@@ -22,6 +22,7 @@ use crate::quantize::*;
 use crate::rdo::*;
 use crate::stats::EncoderStats;
 use crate::util::*;
+use rav1e_partitioning::*;
 use std::ops::{Index, IndexMut};
 use std::sync::Arc;
 

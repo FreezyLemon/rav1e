@@ -9,13 +9,13 @@
 
 use crate::context::*;
 use crate::header::PRIMARY_REF_NONE;
-use crate::partition::BlockSize;
 use crate::rdo::spatiotemporal_scale;
 use crate::rdo::DistortionScale;
 use crate::tiling::TileStateMut;
 use crate::util::Pixel;
 use crate::FrameInvariants;
 use crate::FrameState;
+use rav1e_partitioning::{BlockSize, TileBlockOffset};
 
 pub const MAX_SEGMENTS: usize = 8;
 

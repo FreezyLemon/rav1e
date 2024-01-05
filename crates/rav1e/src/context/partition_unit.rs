@@ -9,6 +9,8 @@
 
 use super::*;
 
+use rav1e_partitioning::*;
+
 // Generates 4 bit field in which each bit set to 1 represents
 // a blocksize partition  1111 means we split 64x64, 32x32, 16x16
 // and 8x8.  1000 means we just split the 64x64 to 32x32

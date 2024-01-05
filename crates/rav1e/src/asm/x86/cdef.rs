@@ -365,7 +365,7 @@ mod test {
       paste::item! {
         #[test]
         fn [<cdef_dir_ $OPT>]() {
-          use crate::context::{TileSuperBlockOffset, SuperBlockOffset};
+          use rav1e_partitioning::{TileSuperBlockOffset, SuperBlockOffset};
 
           if !is_x86_feature_detected!($OPTLIT) {
             eprintln!("Ignoring {} test, not supported on this machine!", $OPTLIT);
@@ -412,7 +412,7 @@ mod test {
       paste::item! {
         #[test]
         fn [<cdef_dir_ $OPT _hbd>]() {
-          use crate::context::{TileSuperBlockOffset, SuperBlockOffset};
+          use rav1e_partitioning::{TileSuperBlockOffset, SuperBlockOffset};
 
           if !is_x86_feature_detected!($OPTLIT) {
             eprintln!("Ignoring {} test, not supported on this machine!", $OPTLIT);

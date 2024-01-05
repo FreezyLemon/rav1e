@@ -11,7 +11,9 @@ use crate::context::*;
 use crate::mc::MotionVector;
 use crate::partition::*;
 use crate::predict::PredictionMode;
-use crate::transform::*;
+
+use rav1e_partitioning::*;
+use rav1e_tx::TxSize;
 
 use std::cmp;
 use std::marker::PhantomData;

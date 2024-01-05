@@ -11,11 +11,11 @@ pub use self::cdef_dist::*;
 pub use self::sse::*;
 use crate::cpu_features::CpuFeatureLevel;
 use crate::dist::*;
-use crate::partition::BlockSize;
 use crate::tiling::*;
 use crate::util::*;
 
 use rav1e_asm_x86::dist::*;
+use rav1e_partitioning::BlockSize;
 
 mod cdef_dist;
 mod sse;

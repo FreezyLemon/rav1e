@@ -12,11 +12,11 @@ pub mod test {
   use crate::config::CpuFeatureLevel;
   use crate::dist::*;
   use crate::frame::*;
-  use crate::partition::BlockSize;
   use crate::rdo::DistortionScale;
   use crate::tiling::Area;
   use crate::util::*;
   use rand::{thread_rng, Rng};
+  use rav1e_partitioning::BlockSize;
 
   fn random_planes<T: Pixel>(bd: usize) -> (Plane<T>, Plane<T>) {
     let mut rng = thread_rng();

@@ -8,7 +8,7 @@
 // PATENTS file, you can obtain it at www.aomedia.org/license/patent.
 
 use crate::cpu_features::CpuFeatureLevel;
-use crate::partition::{BlockSize, IntraEdge};
+use crate::partition::IntraEdge;
 use crate::predict::{
   rust, IntraEdgeFilterParameters, PredictionMode, PredictionVariant,
 };
@@ -19,6 +19,7 @@ use std::mem::MaybeUninit;
 use v_frame::pixel::PixelType;
 
 use rav1e_asm_x86::predict::*;
+use rav1e_partitioning::BlockSize;
 
 #[inline(always)]
 pub fn dispatch_predict_intra<T: Pixel>(

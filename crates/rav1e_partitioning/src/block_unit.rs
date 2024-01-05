@@ -16,12 +16,10 @@ pub const COMP_REF_TYPE_CONTEXTS: usize = 5;
 pub const UNI_COMP_REF_CONTEXTS: usize = 3;
 
 pub const PLANE_TYPES: usize = 2;
-const REF_TYPES: usize = 2;
+pub const REF_TYPES: usize = 2;
 
 pub const COMP_INDEX_CONTEXTS: usize = 6;
 pub const COMP_GROUP_IDX_CONTEXTS: usize = 6;
-
-// pub const COEFF_CONTEXT_MAX_WIDTH: usize = MAX_TILE_WIDTH / MI_SIZE;
 
 /// Absolute offset in blocks, where a block is defined
 /// to be an `N*N` square where `N == (1 << BLOCK_TO_PLANE_SHIFT)`.

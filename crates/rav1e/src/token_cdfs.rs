@@ -12,6 +12,7 @@
 use crate::context::*;
 use crate::transform::*;
 use crate::util::*;
+use rav1e_partitioning::*;
 
 const TOKEN_CDF_Q_CTXS: usize = 4;
 

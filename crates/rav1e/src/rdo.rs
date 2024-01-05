@@ -27,7 +27,6 @@ use crate::me::estimate_motion;
 use crate::me::MVSamplingMode;
 use crate::me::MotionSearchResult;
 use crate::motion_compensate;
-use crate::partition::PartitionType::*;
 use crate::partition::RefType::*;
 use crate::partition::*;
 use crate::predict::{
@@ -46,6 +45,8 @@ use crate::{encode_block_post_cdef, encode_block_pre_cdef};
 
 use arrayvec::*;
 use itertools::izip;
+use rav1e_partitioning::*;
+use rav1e_partitioning::PartitionType::*;
 use std::fmt;
 use std::mem::MaybeUninit;
 

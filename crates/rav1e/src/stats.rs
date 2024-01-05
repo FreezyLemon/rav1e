@@ -7,7 +7,6 @@
 // Media Patent License 1.0 was not distributed with this source code in the
 // PATENTS file, you can obtain it at www.aomedia.org/license/patent.
 
-use crate::partition::BlockSize;
 use crate::predict::PREDICTION_MODES;
 use crate::serialize::{Deserialize, Serialize};
 use crate::transform::TX_TYPES;
@@ -15,6 +14,7 @@ use crate::transform::TX_TYPES;
 #[cfg(feature = "serialize")]
 use serde_big_array::BigArray;
 
+use rav1e_partitioning::BlockSize;
 use std::ops::{Add, AddAssign};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

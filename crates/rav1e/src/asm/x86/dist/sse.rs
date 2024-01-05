@@ -10,12 +10,12 @@
 use crate::cpu_features::CpuFeatureLevel;
 use crate::dist::*;
 use crate::encoder::IMPORTANCE_BLOCK_SIZE;
-use crate::partition::BlockSize;
 use crate::rdo::DistortionScale;
 use crate::tiling::PlaneRegion;
 use crate::util::*;
 
 use rav1e_asm_x86::dist::sse::*;
+use rav1e_partitioning::BlockSize;
 
 type WeightedSseFn = unsafe extern fn(
   src: *const u8,

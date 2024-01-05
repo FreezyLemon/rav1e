@@ -28,6 +28,7 @@ use crate::stats::EncoderStats;
 use crate::tiling::Area;
 use crate::util::Pixel;
 use arrayvec::ArrayVec;
+use rav1e_partitioning::BlockSize;
 use std::cmp;
 use std::collections::{BTreeMap, BTreeSet};
 use std::env;

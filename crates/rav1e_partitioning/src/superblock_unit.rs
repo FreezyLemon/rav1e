@@ -5,7 +5,7 @@ use std::ops::Add;
 pub const MAX_SB_SIZE_LOG2: usize = 7;
 const SB_SIZE_LOG2: usize = 6;
 pub const SB_SIZE: usize = 1 << SB_SIZE_LOG2;
-const SB_SQUARE: usize = SB_SIZE * SB_SIZE;
+pub const SB_SQUARE: usize = SB_SIZE * SB_SIZE;
 
 pub const MI_SIZE_LOG2: usize = 2;
 pub const MI_SIZE: usize = 1 << MI_SIZE_LOG2;

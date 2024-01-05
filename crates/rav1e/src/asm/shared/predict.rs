@@ -11,12 +11,13 @@
 mod test {
   use interpolate_name::interpolate_test;
   use rand::random;
+  use rav1e_partitioning::BlockSize;
   use std::mem::MaybeUninit;
 
   use crate::context::MAX_TX_SIZE;
   use crate::cpu_features::CpuFeatureLevel;
   use crate::frame::{AsRegion, Plane};
-  use crate::partition::{BlockSize, IntraEdge};
+  use crate::partition::IntraEdge;
   use crate::predict::dispatch_predict_intra;
   use crate::predict::pred_cfl_ac;
   use crate::predict::rust;

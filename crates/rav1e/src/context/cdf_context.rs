@@ -9,6 +9,7 @@
 
 use super::*;
 use std::marker::PhantomData;
+use rav1e_partitioning::*;
 
 pub const CDF_LEN_MAX: usize = 16;
 

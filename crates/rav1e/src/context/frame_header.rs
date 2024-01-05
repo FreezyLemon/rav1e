@@ -8,6 +8,7 @@
 // PATENTS file, you can obtain it at www.aomedia.org/license/patent.
 
 use super::*;
+use rav1e_partitioning::*;
 
 impl CDFContext {
   // rather than test writing and rolling back the cdf, we just count Q8 bits using the current cdf

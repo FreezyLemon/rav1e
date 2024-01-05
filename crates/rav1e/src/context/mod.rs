@@ -15,11 +15,9 @@ use crate::color::ChromaSampling;
 use crate::ec::{Writer, OD_BITRES};
 use crate::encoder::FrameInvariants;
 use crate::entropymode::*;
-use crate::frame::*;
 use crate::header::ReferenceMode;
 use crate::lrf::*;
 use crate::mc::MotionVector;
-use crate::partition::BlockSize::*;
 use crate::partition::RefType::*;
 use crate::partition::*;
 use crate::scan_order::*;
@@ -31,8 +29,9 @@ use crate::transform::*;
 use crate::util::*;
 
 use arrayvec::*;
+use rav1e_partitioning::{BlockSize, BlockSize::*};
 use std::default::Default;
-use std::ops::{Add, Index, IndexMut};
+use std::ops::{Index, IndexMut};
 use std::*;
 
 const MAX_REF_MV_STACK_SIZE: usize = 8;
@@ -58,9 +57,6 @@ pub use cdf_context::*;
 
 mod partition_unit;
 pub use partition_unit::*;
-
-mod superblock_unit;
-pub use superblock_unit::*;
 
 mod transform_unit;
 pub use transform_unit::TxClass::*;

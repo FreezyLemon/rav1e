@@ -8,9 +8,9 @@
 // PATENTS file, you can obtain it at www.aomedia.org/license/patent.
 
 use num_derive::FromPrimitive;
+use rav1e_partitioning::SB_SIZE;
 
 use crate::api::{Opaque, T35};
-use crate::context::SB_SIZE;
 use crate::mc::SUBPEL_FILTER_SIZE;
 use crate::util::*;
 

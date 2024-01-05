@@ -205,7 +205,7 @@ pub mod prelude {
   pub use crate::frame::{
     Frame, FrameParameters, FrameTypeOverride, Plane, PlaneConfig,
   };
-  pub use crate::partition::BlockSize;
+  pub use rav1e_partitioning::BlockSize;
   pub use crate::predict::PredictionMode;
   pub use crate::transform::TxType;
   pub use crate::util::{CastFromPrimitive, Pixel, PixelType};

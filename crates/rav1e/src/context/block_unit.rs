@@ -13,6 +13,10 @@ use super::*;
 
 use crate::predict::PredictionMode;
 
+use rav1e_partitioning::*;
+
+pub const COEFF_CONTEXT_MAX_WIDTH: usize = MAX_TILE_WIDTH / MI_SIZE;
+
 #[derive(Copy, Clone)]
 pub struct Block {
   pub mode: PredictionMode,

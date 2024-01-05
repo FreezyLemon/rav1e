@@ -12,6 +12,8 @@ use crate::encoder::FrameInvariants;
 use crate::lrf::*;
 use crate::util::Pixel;
 
+use rav1e_partitioning::*;
+
 use std::marker::PhantomData;
 use std::ops::{Index, IndexMut};
 use std::ptr;

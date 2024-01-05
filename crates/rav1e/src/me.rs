@@ -8,11 +8,6 @@
 // PATENTS file, you can obtain it at www.aomedia.org/license/patent.
 
 use crate::api::InterConfig;
-use crate::context::{
-  BlockOffset, PlaneBlockOffset, SuperBlockOffset, TileBlockOffset,
-  TileSuperBlockOffset, MAX_SB_SIZE_LOG2, MIB_SIZE_LOG2, MI_SIZE,
-  MI_SIZE_LOG2, SB_SIZE,
-};
 use crate::dist::*;
 use crate::frame::*;
 use crate::mc::MotionVector;
@@ -24,6 +19,11 @@ use crate::util::{clamp, Pixel};
 use crate::FrameInvariants;
 
 use arrayvec::*;
+use rav1e_partitioning::{
+  BlockOffset, PlaneBlockOffset, SuperBlockOffset, TileBlockOffset,
+  TileSuperBlockOffset, MAX_SB_SIZE_LOG2, MIB_SIZE_LOG2, MI_SIZE,
+  MI_SIZE_LOG2, SB_SIZE,
+};
 use std::ops::{Index, IndexMut};
 use std::sync::{Arc, RwLock, RwLockReadGuard, RwLockWriteGuard};
 

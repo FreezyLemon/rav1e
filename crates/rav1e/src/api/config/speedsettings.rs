@@ -9,7 +9,7 @@
 
 use num_derive::*;
 
-use crate::partition::BlockSize;
+use rav1e_partitioning::BlockSize;
 use crate::serialize::{Deserialize, Serialize};
 
 use std::fmt;

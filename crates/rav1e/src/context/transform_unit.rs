@@ -11,6 +11,7 @@ use super::*;
 use crate::predict::PredictionMode;
 use crate::predict::PredictionMode::*;
 use crate::transform::TxType::*;
+use rav1e_partitioning::*;
 use std::mem::MaybeUninit;
 
 pub const MAX_TX_SIZE: usize = 64;

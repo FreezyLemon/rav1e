@@ -14,6 +14,8 @@ use crate::encoder::*;
 use crate::me::WriteGuardMEStats;
 use crate::util::*;
 
+use rav1e_partitioning::*;
+
 use std::iter::FusedIterator;
 use std::marker::PhantomData;
 use std::ops::DerefMut;

@@ -18,7 +18,6 @@ use crate::header::*;
 use crate::lrf::*;
 use crate::mc::{FilterMode, MotionVector};
 use crate::me::*;
-use crate::partition::PartitionType::*;
 use crate::partition::RefType::*;
 use crate::partition::*;
 use crate::predict::{
@@ -36,6 +35,9 @@ use crate::tiling::*;
 use crate::transform::*;
 use crate::util::*;
 use crate::wasm_bindgen::*;
+
+use rav1e_partitioning::*;
+use rav1e_partitioning::PartitionType::*;
 
 use arg_enum_proc_macro::ArgEnum;
 use arrayvec::*;

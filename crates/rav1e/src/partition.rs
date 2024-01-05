@@ -10,18 +10,18 @@
 #![allow(non_camel_case_types)]
 #![allow(dead_code)]
 
-use self::BlockSize::*;
-use self::TxSize::*;
 use crate::context::*;
 use crate::frame::*;
 use crate::predict::*;
 use crate::recon_intra::*;
-use crate::serialize::{Deserialize, Serialize};
 use crate::tiling::*;
 use crate::transform::TxSize;
 use crate::util::*;
-use thiserror::Error;
+use rav1e_partitioning::LOCAL_BLOCK_MASK;
+use rav1e_partitioning::MI_SIZE_LOG2;
+use rav1e_partitioning::TileBlockOffset;
 
+use rav1e_partitioning::{BlockSize, BlockSize::*, PartitionType};
 use std::mem::transmute;
 use std::mem::MaybeUninit;
 
@@ -68,8 +68,6 @@ impl RefType {
 }
 
 use self::RefType::*;
-use std::fmt;
-use std::fmt::Display;
 
 pub const ALL_INTER_REFS: [RefType; 7] = [
   LAST_FRAME,
@@ -613,8 +611,8 @@ pub fn has_bl(bo: TileBlockOffset, bsize: BlockSize) -> bool {
 
 #[cfg(test)]
 mod tests {
-  use crate::partition::BlockSize::*;
-  use crate::partition::{BlockSize, InvalidBlockSize};
+  use rav1e_partitioning::BlockSize::*;
+  use rav1e_partitioning::{BlockSize, InvalidBlockSize};
 
   #[test]
   fn from_wh_matches_naive() {

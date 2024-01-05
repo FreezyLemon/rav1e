@@ -13,13 +13,12 @@
 #[macro_use]
 pub mod forward_shared;
 
+use rav1e_partitioning::{BlockSize, BlockSize::*, MI_SIZE_LOG2};
 pub use rav1e_tx::*;
 
 pub use self::forward::forward_transform;
 pub use self::inverse::inverse_transform_add;
 
-use crate::context::MI_SIZE_LOG2;
-use crate::partition::{BlockSize, BlockSize::*};
 use crate::util::*;
 
 use TxSize::*;

@@ -1,3 +1,5 @@
+#![allow(non_camel_case_types)]
+
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Debug)]
 pub enum PartitionType {
   PARTITION_NONE,

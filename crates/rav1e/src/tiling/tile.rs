@@ -13,6 +13,8 @@ use crate::context::*;
 use crate::frame::*;
 use crate::util::*;
 
+use rav1e_partitioning::*;
+
 /// Rectangle of a tile, in pixels
 ///
 /// This is similar to Rect, but with unsigned (x, y) for convenience.

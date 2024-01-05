@@ -77,6 +77,7 @@ wasm = ["wasm-bindgen"]
 dump_lookahead_data = ["byteorder", "image"]
 
 [dependencies]
+rav1e_partitioning = { path = "../rav1e_partitioning" }
 rav1e_tx = { path = "../rav1e_tx" }
 
 arg_enum_proc_macro = "0.3.4"

@@ -8,11 +8,12 @@
 // PATENTS file, you can obtain it at www.aomedia.org/license/patent.
 
 use crate::color::ChromaSampling::Cs400;
-use crate::context::*;
 use crate::encoder::FrameInvariants;
 use crate::frame::*;
 use crate::tiling::*;
 use crate::util::{clamp, msb, CastFromPrimitive, Pixel};
+
+use rav1e_partitioning::{SuperBlockOffset, TileSuperBlockOffset};
 
 use crate::cpu_features::CpuFeatureLevel;
 use std::cmp;

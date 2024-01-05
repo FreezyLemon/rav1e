@@ -24,6 +24,7 @@ use crate::Sequence;
 
 use arrayvec::ArrayVec;
 use bitstream_io::{BigEndian, BitWrite, BitWriter, LittleEndian};
+use rav1e_partitioning::*;
 
 use std::io;
 

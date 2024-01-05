@@ -25,7 +25,7 @@ cfg_if::cfg_if! {
 
 use aligned_vec::{avec, ABox};
 
-use crate::context::{TileBlockOffset, MAX_SB_SIZE_LOG2, MAX_TX_SIZE};
+use crate::context::MAX_TX_SIZE;
 use crate::cpu_features::CpuFeatureLevel;
 use crate::encoder::FrameInvariants;
 use crate::frame::*;
@@ -34,6 +34,8 @@ use crate::partition::*;
 use crate::tiling::*;
 use crate::transform::*;
 use crate::util::*;
+
+use rav1e_partitioning::{BlockSize, TileBlockOffset, MAX_SB_SIZE_LOG2};
 
 pub const ANGLE_STEP: i8 = 3;
 
@@ -646,7 +648,7 @@ pub fn luma_ac<'ac, T: Pixel>(
   tile_bo: TileBlockOffset, bsize: BlockSize, tx_size: TxSize,
   fi: &FrameInvariants<T>,
 ) -> &'ac mut [i16] {
-  use crate::context::MI_SIZE_LOG2;
+  use rav1e_partitioning::MI_SIZE_LOG2;
 
   let PlaneConfig { xdec, ydec, .. } = ts.input.planes[1].cfg;
   let plane_bsize = bsize.subsampled_size(xdec, ydec).unwrap();

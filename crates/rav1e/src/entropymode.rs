@@ -12,8 +12,11 @@
 use crate::context::*;
 use crate::partition::*;
 use crate::predict::*;
-use crate::transform::*;
 use crate::util::*;
+
+use rav1e_partitioning::*;
+use rav1e_tx::TX_TYPES;
+use rav1e_tx::TxSize;
 
 pub const PALETTE_BSIZE_CTXS: usize = 7;
 pub const PALETTE_Y_MODE_CONTEXTS: usize = 3;

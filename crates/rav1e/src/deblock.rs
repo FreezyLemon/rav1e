@@ -18,6 +18,9 @@ use crate::tiling::*;
 use crate::transform::TxSizeExt;
 use crate::util::{clamp, ILog, Pixel};
 use crate::DeblockState;
+
+use rav1e_partitioning::*;
+
 use rayon::iter::*;
 use std::cmp;
 
