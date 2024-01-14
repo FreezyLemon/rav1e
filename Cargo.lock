@@ -1289,7 +1289,6 @@ dependencies = [
  "nasm-rs",
  "new_debug_unreachable",
  "nom",
- "noop_proc_macro",
  "num-derive",
  "num-traits",
  "once_cell",

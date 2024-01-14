@@ -87,7 +87,6 @@ backtrace = { version = "0.3", optional = true }
 num-traits = "0.2"
 num-derive = "0.4"
 paste = "1.0"
-noop_proc_macro = "0.3.0"
 serde = { version = "1.0", features = ["derive"], optional = true }
 dav1d-sys = { version = "0.6.0", package = "libdav1d-sys", optional = true }
 aom-sys = { version = "0.3.3", optional = true }

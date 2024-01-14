@@ -7,16 +7,16 @@
 // Media Patent License 1.0 was not distributed with this source code in the
 // PATENTS file, you can obtain it at www.aomedia.org/license/patent.
 
-use crate::wasm_bindgen::*;
-
 #[cfg(feature = "serialize")]
 use serde::*;
+
+#[cfg(feature = "wasm")]
+use wasm_bindgen::prelude::*;
 
 use arg_enum_proc_macro::ArgEnum;
 use num_derive::FromPrimitive;
 
 /// Sample position for subsampled chroma
-#[wasm_bindgen]
 #[derive(
   Copy,
   Clone,
@@ -27,6 +27,7 @@ use num_derive::FromPrimitive;
   Default,
 )]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[repr(C)]
 pub enum ChromaSamplePosition {
   /// The source video transfer function must be signaled
@@ -208,7 +209,6 @@ impl ColorDescription {
 /// Allowed pixel value range
 ///
 /// C.f. `VideoFullRangeFlag` variable specified in ISO/IEC 23091-4/ITU-T H.273
-#[wasm_bindgen]
 #[derive(
   ArgEnum,
   Debug,
@@ -220,6 +220,7 @@ impl ColorDescription {
   Default,
 )]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[repr(C)]
 pub enum PixelRange {
   /// Studio swing representation

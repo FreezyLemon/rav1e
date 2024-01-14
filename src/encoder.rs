@@ -35,12 +35,14 @@ use crate::stats::EncoderStats;
 use crate::tiling::*;
 use crate::transform::*;
 use crate::util::*;
-use crate::wasm_bindgen::*;
 
 use arg_enum_proc_macro::ArgEnum;
 use arrayvec::*;
 use bitstream_io::{BigEndian, BitWrite, BitWriter};
 use rayon::iter::*;
+
+#[cfg(feature = "wasm")]
+use wasm_bindgen::prelude::*;
 
 use std::collections::VecDeque;
 use std::io::Write;
@@ -100,11 +102,11 @@ impl<T: Pixel> ReferenceFramesSet<T> {
   }
 }
 
-#[wasm_bindgen]
 #[derive(
   ArgEnum, Copy, Clone, Debug, PartialEq, Eq, Default,
 )]
 #[cfg_attr(feature = "serialize", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[repr(C)]
 pub enum Tune {
   Psnr,

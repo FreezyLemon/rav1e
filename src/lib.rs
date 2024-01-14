@@ -123,16 +123,6 @@ pub(crate) mod built_info {
   include!(concat!(env!("OUT_DIR"), "/built.rs"));
 }
 
-mod wasm_bindgen {
-  cfg_if::cfg_if! {
-    if #[cfg(feature="wasm")] {
-      pub use wasm_bindgen::prelude::*;
-    } else {
-      pub use noop_proc_macro::wasm_bindgen;
-    }
-  }
-}
-
 #[cfg(any(cargo_c, feature = "capi"))]
 pub mod capi;
 
