@@ -41,6 +41,9 @@ use arrayvec::*;
 use bitstream_io::{BigEndian, BitWrite, BitWriter};
 use rayon::iter::*;
 
+#[cfg(feature = "serialize")]
+use serde::*;
+
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
@@ -102,10 +105,8 @@ impl<T: Pixel> ReferenceFramesSet<T> {
   }
 }
 
-#[derive(
-  ArgEnum, Copy, Clone, Debug, PartialEq, Eq, Default,
-)]
-#[cfg_attr(feature = "serialize", derive(serde::Serialize, serde::Deserialize))]
+#[derive(ArgEnum, Copy, Clone, Debug, PartialEq, Eq, Default)]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[repr(C)]
 pub enum Tune {

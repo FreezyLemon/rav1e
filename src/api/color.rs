@@ -17,15 +17,7 @@ use arg_enum_proc_macro::ArgEnum;
 use num_derive::FromPrimitive;
 
 /// Sample position for subsampled chroma
-#[derive(
-  Copy,
-  Clone,
-  Debug,
-  PartialEq,
-  Eq,
-  FromPrimitive,
-  Default,
-)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, FromPrimitive, Default)]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[repr(C)]
@@ -47,14 +39,7 @@ pub use v_frame::pixel::ChromaSampling;
 ///
 /// As defined by “Color primaries” section of ISO/IEC 23091-4/ITU-T H.273
 #[derive(
-  ArgEnum,
-  Debug,
-  Clone,
-  Copy,
-  PartialEq,
-  Eq,
-  FromPrimitive,
-  Default,
+  ArgEnum, Debug, Clone, Copy, PartialEq, Eq, FromPrimitive, Default,
 )]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 #[repr(C)]
@@ -90,14 +75,7 @@ pub enum ColorPrimaries {
 ///
 /// As defined by “Transfer characteristics” section of ISO/IEC 23091-4/ITU-TH.273.
 #[derive(
-  ArgEnum,
-  Debug,
-  Clone,
-  Copy,
-  PartialEq,
-  Eq,
-  FromPrimitive,
-  Default,
+  ArgEnum, Debug, Clone, Copy, PartialEq, Eq, FromPrimitive, Default,
 )]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 #[repr(C)]
@@ -143,14 +121,7 @@ pub enum TransferCharacteristics {
 ///
 /// As defined by the “Matrix coefficients” section of ISO/IEC 23091-4/ITU-TH.273.
 #[derive(
-  ArgEnum,
-  Debug,
-  Clone,
-  Copy,
-  PartialEq,
-  Eq,
-  FromPrimitive,
-  Default,
+  ArgEnum, Debug, Clone, Copy, PartialEq, Eq, FromPrimitive, Default,
 )]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 #[repr(C)]
@@ -210,14 +181,7 @@ impl ColorDescription {
 ///
 /// C.f. `VideoFullRangeFlag` variable specified in ISO/IEC 23091-4/ITU-T H.273
 #[derive(
-  ArgEnum,
-  Debug,
-  Clone,
-  Copy,
-  PartialEq,
-  Eq,
-  FromPrimitive,
-  Default,
+  ArgEnum, Debug, Clone, Copy, PartialEq, Eq, FromPrimitive, Default,
 )]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "wasm", wasm_bindgen)]

@@ -315,15 +315,7 @@ impl Default for PartitionRange {
 }
 
 /// Prediction modes to search.
-#[derive(
-  Clone,
-  Copy,
-  Debug,
-  PartialOrd,
-  PartialEq,
-  Eq,
-  FromPrimitive,
-)]
+#[derive(Clone, Copy, Debug, PartialOrd, PartialEq, Eq, FromPrimitive)]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 pub enum SceneDetectionSpeed {
   /// Fastest scene detection using pixel-wise comparison
@@ -350,15 +342,7 @@ impl fmt::Display for SceneDetectionSpeed {
 }
 
 /// Prediction modes to search.
-#[derive(
-  Clone,
-  Copy,
-  Debug,
-  PartialOrd,
-  PartialEq,
-  Eq,
-  FromPrimitive,
-)]
+#[derive(Clone, Copy, Debug, PartialOrd, PartialEq, Eq, FromPrimitive)]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 #[cfg_attr(test, derive(Default))]
 pub enum PredictionModesSetting {
@@ -387,15 +371,7 @@ impl fmt::Display for PredictionModesSetting {
 }
 
 /// Search level for self guided restoration
-#[derive(
-  Clone,
-  Copy,
-  Debug,
-  PartialOrd,
-  PartialEq,
-  Eq,
-  FromPrimitive,
-)]
+#[derive(Clone, Copy, Debug, PartialOrd, PartialEq, Eq, FromPrimitive)]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 pub enum SGRComplexityLevel {
   /// Search all sgr parameters
@@ -418,15 +394,7 @@ impl fmt::Display for SGRComplexityLevel {
 }
 
 /// Search level for segmentation
-#[derive(
-  Clone,
-  Copy,
-  Debug,
-  PartialOrd,
-  PartialEq,
-  Eq,
-  FromPrimitive,
-)]
+#[derive(Clone, Copy, Debug, PartialOrd, PartialEq, Eq, FromPrimitive)]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 pub enum SegmentationLevel {
   /// No segmentation is signalled.
