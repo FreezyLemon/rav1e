@@ -16,11 +16,13 @@ use crate::context::*;
 use crate::frame::*;
 use crate::predict::*;
 use crate::recon_intra::*;
-use crate::serialize::{Deserialize, Serialize};
 use crate::tiling::*;
 use crate::transform::TxSize;
 use crate::util::*;
 use thiserror::Error;
+
+#[cfg(feature = "serialize")]
+use serde::*;
 
 use std::mem::transmute;
 use std::mem::MaybeUninit;
@@ -125,7 +127,8 @@ pub enum PartitionType {
   PARTITION_INVALID,
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 #[cfg_attr(test, derive(Default))]
 pub enum BlockSize {
   BLOCK_4X4,

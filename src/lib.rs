@@ -123,16 +123,6 @@ pub(crate) mod built_info {
   include!(concat!(env!("OUT_DIR"), "/built.rs"));
 }
 
-mod serialize {
-  cfg_if::cfg_if! {
-    if #[cfg(feature="serialize")] {
-      pub use serde::*;
-    } else {
-      pub use noop_proc_macro::{Deserialize, Serialize};
-    }
-  }
-}
-
 mod wasm_bindgen {
   cfg_if::cfg_if! {
     if #[cfg(feature="wasm")] {

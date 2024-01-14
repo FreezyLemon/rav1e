@@ -7,8 +7,10 @@
 // Media Patent License 1.0 was not distributed with this source code in the
 // PATENTS file, you can obtain it at www.aomedia.org/license/patent.
 
-use crate::serialize::*;
 use crate::wasm_bindgen::*;
+
+#[cfg(feature = "serialize")]
+use serde::*;
 
 use arg_enum_proc_macro::ArgEnum;
 use num_derive::FromPrimitive;
@@ -22,10 +24,9 @@ use num_derive::FromPrimitive;
   PartialEq,
   Eq,
   FromPrimitive,
-  Serialize,
-  Deserialize,
   Default,
 )]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 #[repr(C)]
 pub enum ChromaSamplePosition {
   /// The source video transfer function must be signaled
@@ -52,10 +53,9 @@ pub use v_frame::pixel::ChromaSampling;
   PartialEq,
   Eq,
   FromPrimitive,
-  Serialize,
-  Deserialize,
   Default,
 )]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 #[repr(C)]
 pub enum ColorPrimaries {
   /// BT.709
@@ -96,10 +96,9 @@ pub enum ColorPrimaries {
   PartialEq,
   Eq,
   FromPrimitive,
-  Serialize,
-  Deserialize,
   Default,
 )]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 #[repr(C)]
 pub enum TransferCharacteristics {
   /// BT.709
@@ -150,10 +149,9 @@ pub enum TransferCharacteristics {
   PartialEq,
   Eq,
   FromPrimitive,
-  Serialize,
-  Deserialize,
   Default,
 )]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 #[repr(C)]
 pub enum MatrixCoefficients {
   /// Identity matrix
@@ -188,7 +186,8 @@ pub enum MatrixCoefficients {
 }
 
 /// Signal the content color description
-#[derive(Copy, Clone, Debug, Serialize, Deserialize)]
+#[derive(Copy, Clone, Debug)]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 pub struct ColorDescription {
   /// Color primaries.
   pub color_primaries: ColorPrimaries,
@@ -218,10 +217,9 @@ impl ColorDescription {
   PartialEq,
   Eq,
   FromPrimitive,
-  Serialize,
-  Deserialize,
   Default,
 )]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 #[repr(C)]
 pub enum PixelRange {
   /// Studio swing representation
@@ -234,7 +232,8 @@ pub enum PixelRange {
 /// High dynamic range content light level
 ///
 /// As defined by CEA-861.3, Appendix A.
-#[derive(Copy, Clone, Debug, Serialize, Deserialize)]
+#[derive(Copy, Clone, Debug)]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 pub struct ContentLight {
   /// Maximum content light level
   pub max_content_light_level: u16,
@@ -244,7 +243,8 @@ pub struct ContentLight {
 
 /// Chromaticity coordinates as defined by CIE 1931, expressed as 0.16
 /// fixed-point values.
-#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug)]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 #[repr(C)]
 pub struct ChromaticityPoint {
   /// The X coordinate.
@@ -256,7 +256,8 @@ pub struct ChromaticityPoint {
 /// High dynamic range mastering display color volume
 ///
 /// As defined by CIE 1931
-#[derive(Copy, Clone, Debug, Serialize, Deserialize)]
+#[derive(Copy, Clone, Debug)]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 pub struct MasteringDisplay {
   /// Chromaticity coordinates in Red, Green, Blue order
   /// expressed as 0.16 fixed-point

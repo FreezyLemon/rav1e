@@ -10,13 +10,16 @@
 use num_derive::*;
 
 use crate::partition::BlockSize;
-use crate::serialize::{Deserialize, Serialize};
+
+#[cfg(feature = "serialize")]
+use serde::*;
 
 use std::fmt;
 
 // NOTE: Add Structures at the end.
 /// Contains the speed settings.
-#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug)]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 #[non_exhaustive]
 pub struct SpeedSettings {
   /// Enables inter-frames to have multiple reference frames.
@@ -194,7 +197,8 @@ impl SpeedSettings {
   }
 }
 
-#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug)]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 #[cfg_attr(test, derive(Default))]
 /// Speed settings related to transform size and type decision
 pub struct TransformSpeedSettings {
@@ -222,7 +226,8 @@ pub struct TransformSpeedSettings {
   pub enable_inter_tx_split: bool,
 }
 
-#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug)]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 #[cfg_attr(test, derive(Default))]
 /// Speed settings related to partition decision
 pub struct PartitionSpeedSettings {
@@ -241,7 +246,8 @@ pub struct PartitionSpeedSettings {
   pub partition_range: PartitionRange,
 }
 
-#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug)]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 #[cfg_attr(test, derive(Default))]
 /// Speed settings related to motion estimation and motion vector selection
 pub struct MotionSpeedSettings {
@@ -260,7 +266,8 @@ pub struct MotionSpeedSettings {
   pub me_allow_full_search: bool,
 }
 
-#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug)]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 #[cfg_attr(test, derive(Default))]
 /// Speed settings related to intra prediction mode selection
 pub struct PredictionSpeedSettings {
@@ -274,7 +281,8 @@ pub struct PredictionSpeedSettings {
 }
 
 /// Range of block sizes to use.
-#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug)]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 pub struct PartitionRange {
   pub(crate) min: BlockSize,
   pub(crate) max: BlockSize,
@@ -315,9 +323,8 @@ impl Default for PartitionRange {
   PartialEq,
   Eq,
   FromPrimitive,
-  Serialize,
-  Deserialize,
 )]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 pub enum SceneDetectionSpeed {
   /// Fastest scene detection using pixel-wise comparison
   Fast,
@@ -351,9 +358,8 @@ impl fmt::Display for SceneDetectionSpeed {
   PartialEq,
   Eq,
   FromPrimitive,
-  Serialize,
-  Deserialize,
 )]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 #[cfg_attr(test, derive(Default))]
 pub enum PredictionModesSetting {
   /// Only simple prediction modes.
@@ -389,9 +395,8 @@ impl fmt::Display for PredictionModesSetting {
   PartialEq,
   Eq,
   FromPrimitive,
-  Serialize,
-  Deserialize,
 )]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 pub enum SGRComplexityLevel {
   /// Search all sgr parameters
   Full,
@@ -421,9 +426,8 @@ impl fmt::Display for SGRComplexityLevel {
   PartialEq,
   Eq,
   FromPrimitive,
-  Serialize,
-  Deserialize,
 )]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 pub enum SegmentationLevel {
   /// No segmentation is signalled.
   Disabled,

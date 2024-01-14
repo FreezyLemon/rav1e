@@ -31,7 +31,6 @@ use crate::rate::{
 };
 use crate::rdo::*;
 use crate::segmentation::*;
-use crate::serialize::{Deserialize, Serialize};
 use crate::stats::EncoderStats;
 use crate::tiling::*;
 use crate::transform::*;
@@ -103,8 +102,9 @@ impl<T: Pixel> ReferenceFramesSet<T> {
 
 #[wasm_bindgen]
 #[derive(
-  ArgEnum, Copy, Clone, Debug, PartialEq, Eq, Serialize, Deserialize, Default,
+  ArgEnum, Copy, Clone, Debug, PartialEq, Eq, Default,
 )]
+#[cfg_attr(feature = "serialize", derive(serde::Serialize, serde::Deserialize))]
 #[repr(C)]
 pub enum Tune {
   Psnr,

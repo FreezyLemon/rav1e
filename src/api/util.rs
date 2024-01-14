@@ -9,13 +9,15 @@
 #![deny(missing_docs)]
 
 use crate::frame::*;
-use crate::serialize::{Deserialize, Serialize};
 use crate::stats::EncoderStats;
 use crate::util::Pixel;
 
 use std::any::Any;
 use std::fmt;
 use std::sync::Arc;
+
+#[cfg(feature = "serialize")]
+use serde::*;
 
 use thiserror::*;
 
@@ -99,7 +101,8 @@ impl<'a> serde::Deserialize<'a> for Rational {
 
 /// Possible types of a frame.
 #[allow(dead_code, non_camel_case_types)]
-#[derive(Debug, Eq, PartialEq, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 #[repr(C)]
 pub enum FrameType {
   /// Key frame.
@@ -197,7 +200,8 @@ pub enum EncoderStatus {
 ///
 /// A packet contains one shown frame together with zero or more additional
 /// frames.
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug)]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 pub struct Packet<T: Pixel> {
   /// The packet data.
   pub data: Vec<u8>,
