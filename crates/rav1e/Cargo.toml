@@ -65,6 +65,7 @@ dump_lookahead_data = ["byteorder", "image"]
 [dependencies]
 rav1e_partitioning = { path = "../rav1e_partitioning" }
 rav1e_tx = { path = "../rav1e_tx" }
+ivf = { path = "../ivf", optional = true }
 
 arg_enum_proc_macro = "0.3.4"
 bitstream-io = "2"
@@ -79,7 +80,6 @@ serde = { version = "1.0", features = ["derive"], optional = true }
 dav1d-sys = { version = "0.7.0", package = "libdav1d-sys", optional = true }
 aom-sys = { version = "0.3.3", optional = true }
 scan_fmt = { version = "0.2.6", optional = true, default-features = false }
-ivf = { version = "0.1", path = "../ivf/", optional = true }
 v_frame = "0.3.7"
 rayon = { package = "maybe-rayon", version = "0.1", default-features = false }
 toml = { version = "0.8", optional = true }
@@ -139,16 +139,6 @@ rand_chacha = "0.3"
 
 [target.'cfg(any(decode_test, decode_test_dav1d))'.dependencies]
 system-deps = "6"
-
-# [[bin]]
-# name = "rav1e"
-# required-features = ["binaries"]
-# bench = false
-
-# [[bin]]
-# name = "rav1e-ch"
-# required-features = ["binaries", "channel-api", "unstable"]
-# bench = false
 
 [lib]
 bench = false
