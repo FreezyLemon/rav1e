@@ -1302,7 +1302,6 @@ dependencies = [
  "semver",
  "serde",
  "serde-big-array",
- "signal-hook",
  "simd_helpers",
  "system-deps",
  "thiserror",
@@ -1355,6 +1354,7 @@ dependencies = [
  "profiling",
  "rav1e",
  "scan_fmt",
+ "signal-hook",
  "thiserror",
  "y4m",
 ]

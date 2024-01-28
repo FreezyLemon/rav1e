@@ -24,11 +24,10 @@ autobins = false
 [features]
 decode_test = ["aom-sys"]
 decode_test_dav1d = ["dav1d-sys"]
-default = ["asm", "threading", "signal_support", "git_version"]
+default = ["asm", "threading", "git_version"]
 git_version = ["built/git2"]
 asm = ["dep:rav1e_asm_x86", "dep:rav1e_asm_aarch64"]
 threading = ["rayon/threads"]
-signal_support = ["signal-hook"]
 dump_ivf = ["ivf"]
 quick_test = []
 desync_finder = ["backtrace"]
@@ -108,9 +107,6 @@ features = ["png"]
 
 [build-dependencies]
 built = "0.7"
-
-[target.'cfg(unix)'.dependencies]
-signal-hook = { version = "0.3", optional = true }
 
 [target.'cfg(target_arch = "x86_64")'.dependencies]
 rav1e_asm_x86 = { path = "../rav1e_asm_x86", optional = true }
