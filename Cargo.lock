@@ -1288,6 +1288,7 @@ dependencies = [
  "noop_proc_macro",
  "num-derive",
  "num-traits",
+ "once_cell",
  "paste",
  "pretty_assertions",
  "profiling",
