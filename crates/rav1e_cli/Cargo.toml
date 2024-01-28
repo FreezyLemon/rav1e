@@ -37,7 +37,7 @@ y4m = "0.8"
 profiling = "1"
 libc = "0.2"
 thiserror = "1"
-scan_fmt = "0.2"
+scan_fmt = { version = "0.2", default-features = false }
 once_cell = "1"
 av1-grain = "0.2"
 
