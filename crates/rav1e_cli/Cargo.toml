@@ -20,7 +20,7 @@ asm = ["rav1e/asm"]
 signal_support = ["signal-hook"]
 unstable = []
 channel-api = ["dep:crossbeam"]
-serialize = ["rav1e/serialize", "av1-grain/serialize"]
+serialize = ["serde", "toml", "rav1e/serialize", "av1-grain/serialize"]
 
 [dependencies]
 rav1e = { path = "../rav1e" }
@@ -40,6 +40,10 @@ thiserror = "1"
 scan_fmt = "0.2"
 once_cell = "1"
 av1-grain = "0.2"
+
+# Only needed for feature serialize
+serde = { version = "1", optional = true, features = ["derive"] }
+toml = { version = "0.8", optional = true }
 
 # Only needed for rav1e-ch
 crossbeam = { version = "0.8.4", optional = true }
