@@ -84,6 +84,40 @@ jobs:
         with:
           files: lcov.info
 
+  arm64-test:
+    runs-on: ubuntu-22.04
+
+    needs: rustfmt-clippy
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install stable with aarch64 target
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-unknown-linux-gnu
+      - name: Install aarch64 toolchain, qemu-user and libdav1d deps
+        run: |
+          { echo 'deb [arch=amd64] http://azure.archive.ubuntu.com/ubuntu lunar main universe'
+            echo 'deb [arch=amd64] http://azure.archive.ubuntu.com/ubuntu lunar-updates main universe'
+            echo 'deb [arch=arm64] http://azure.ports.ubuntu.com/ lunar main universe'
+          } | sudo tee /etc/apt/sources.list
+          sudo dpkg --add-architecture arm64
+          sudo apt update
+          sudo apt install qemu-user gcc-aarch64-linux-gnu meson ninja-build nasm
+      - name: Cache cargo registry and compiled dependencies
+        uses: Swatinem/rust-cache@v2
+      - name: Run dav1d tests (arm64)
+        env:
+          CARGO_INCREMENTAL: 0
+          CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUNNER: qemu-aarch64 -L /usr/aarch64-linux-gnu
+          CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUSTFLAGS: -Clinker=aarch64-linux-gnu-gcc
+          PKG_CONFIG_PATH: /usr/lib/aarch64-linux-gnu/pkgconfig
+          PKG_CONFIG_SYSROOT_DIR: /
+        run: |
+          cargo test --lib --verbose --release --target=aarch64-unknown-linux-gnu \
+                     --no-default-features --features=asm,decode_test_dav1d -- \
+                     --include-ignored
+
   build-unix:
     strategy:
       matrix:
@@ -95,8 +129,6 @@ jobs:
           - name: aom-tests
             toolchain: stable
           - name: dav1d-tests
-            toolchain: stable
-          - name: dav1d-tests-arm64
             toolchain: stable
           - name: no-asm-tests
             toolchain: stable
@@ -128,7 +160,6 @@ jobs:
         run: |
           echo "name=RAV1E_CPU_TARGET::rust" >> $GITHUB_ENV
       - name: Install dependencies
-        if: matrix.conf.name != 'dav1d-tests-arm64'
         run: |
           sudo sed -i 's/jammy/lunar/g' /etc/apt/sources.list
           sudo rm /etc/apt/sources.list.d/*.list
@@ -146,19 +177,6 @@ jobs:
         uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.conf.toolchain }}
-      - name: Install aarch64 toolchain, qemu-user and libdav1d deps
-        if: matrix.conf.name == 'dav1d-tests-arm64'
-        env:
-          LINK: http://ports.ubuntu.com/ubuntu-ports/pool
-        run: |
-          rustup target add aarch64-unknown-linux-gnu
-          { echo 'deb [arch=amd64] http://azure.archive.ubuntu.com/ubuntu lunar main universe'
-            echo 'deb [arch=amd64] http://azure.archive.ubuntu.com/ubuntu lunar-updates main universe'
-            echo 'deb [arch=arm64] http://azure.ports.ubuntu.com/ lunar main universe'
-          } | sudo tee /etc/apt/sources.list
-          sudo dpkg --add-architecture arm64
-          sudo apt update
-          sudo apt install qemu-user gcc-aarch64-linux-gnu meson ninja-build nasm
       - name: Cache cargo registry and compiled dependencies
         uses: Swatinem/rust-cache@v2
       - name: Run 1.70.0 tests
