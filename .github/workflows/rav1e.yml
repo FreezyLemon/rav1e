@@ -117,10 +117,7 @@ jobs:
 
     env:
       RUST_BACKTRACE: full
-      RUSTC_WRAPPER: sccache
-      SCCACHE_CACHE_SIZE: 300M
-      SCCACHE_DIR: /home/runner/.cache/sccache
-      SCCACHE_IDLE_TIMEOUT: 0
+      CARGO_INCREMENTAL: 0
 
     runs-on: ubuntu-22.04
 
@@ -130,17 +127,6 @@ jobs:
         if: matrix.conf.name == 'no-asm-tests'
         run: |
           echo "name=RAV1E_CPU_TARGET::rust" >> $GITHUB_ENV
-      - name: Install sccache
-        env:
-          LINK: https://github.com/mozilla/sccache/releases/download
-          SCCACHE_VERSION: 0.2.15
-        run: |
-          SCCACHE_FILE=sccache-v$SCCACHE_VERSION-x86_64-unknown-linux-musl
-          mkdir -p $HOME/.local/bin
-          curl -L "$LINK/v$SCCACHE_VERSION/$SCCACHE_FILE.tar.gz" | tar xz
-          chmod +x $SCCACHE_FILE/sccache
-          mv -f $SCCACHE_FILE/sccache $HOME/.local/bin/sccache
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
       - name: Install dependencies
         if: matrix.conf.name != 'dav1d-tests-arm64'
         run: |
@@ -173,28 +159,8 @@ jobs:
           sudo dpkg --add-architecture arm64
           sudo apt update
           sudo apt install qemu-user gcc-aarch64-linux-gnu meson ninja-build nasm
-      - name: Generate Cargo.version for cache key
-        run: |
-          cargo --version > Cargo.version
-      - name: Cache cargo registry
-        uses: actions/cache@v4
-        continue-on-error: true
-        with:
-          path: ~/.cargo/registry/cache
-          key: ${{ runner.os }}-${{ matrix.conf.name }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.conf.name }}-cargo-registry-
-      - name: Cache sccache output
-        uses: actions/cache@v4
-        continue-on-error: true
-        with:
-          path: /home/runner/.cache/sccache
-          key: ${{ runner.os }}-${{ matrix.conf.name }}-sccache-${{ hashFiles('**/Cargo.*') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.conf.name }}-sccache-
-      - name: Start sccache server
-        run: |
-          sccache --start-server
+      - name: Cache cargo registry and compiled dependencies
+        uses: Swatinem/rust-cache@v2
       - name: Run 1.70.0 tests
         if: matrix.conf.toolchain == '1.70.0' && matrix.conf.name == '1.70.0-tests'
         run: |
@@ -267,9 +233,6 @@ jobs:
         if: matrix.conf.name == 'no-asm-tests'
         run: |
           cargo test --workspace --verbose
-      - name: Stop sccache server
-        run: |
-          sccache --stop-server
 
   build-macos:
     strategy:
@@ -288,16 +251,11 @@ jobs:
 
     env:
       RUST_BACKTRACE: full
-      RUSTC_WRAPPER: sccache
-      SCCACHE_CACHE_SIZE: 300M
-      SCCACHE_DIR: /Users/runner/Library/Caches/Mozilla.sccache
+      CARGO_INCREMENTAL: 0
 
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install sccache
-        run: |
-          brew install sccache
       - name: Install nasm
         run: |
           brew install nasm
@@ -309,28 +267,8 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           target: ${{ matrix.conf.target }}
-      - name: Generate Cargo.version for cache key
-        run: |
-          cargo --version > Cargo.version
-      - name: Cache cargo registry
-        uses: actions/cache@v4
-        continue-on-error: true
-        with:
-          path: ~/.cargo/registry/cache
-          key: ${{ runner.os }}-${{ matrix.conf.name }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.conf.name }}-cargo-registry-
-      - name: Cache sccache output
-        uses: actions/cache@v4
-        continue-on-error: true
-        with:
-          path: /Users/runner/Library/Caches/Mozilla.sccache
-          key: ${{ runner.os }}-${{ matrix.conf.name }}-sccache-${{ hashFiles('**/Cargo.*') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.conf.name }}-sccache-
-      - name: Start sccache server
-        run: |
-          sccache --start-server
+      - name: Cache cargo registry and compiled dependencies
+        uses: Swatinem/rust-cache@v2
       - name: Build
         if: matrix.conf.name == 'cargo-build'
         run: |
@@ -346,9 +284,6 @@ jobs:
         run: |
           cargo fetch
           cargo cbuild --target=${{ matrix.conf.target }} --offline
-      - name: Stop sccache server
-        run: |
-          sccache --stop-server
 
   build-windows:
     strategy:
@@ -363,21 +298,12 @@ jobs:
 
     env:
       RUST_BACKTRACE: full
-      RUSTC_WRAPPER: sccache
-      SCCACHE_CACHE_SIZE: 300M
-      SCCACHE_DIR: C:\sccache
+      CARGO_INCREMENTAL: 0
 
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
       - uses: ilammy/setup-nasm@v1
-      - name: Install sccache
-        run: |
-          $LINK = "https://github.com/mozilla/sccache/releases/download/0.2.12"
-          $SCCACHE_FILE = "sccache-0.2.12-x86_64-pc-windows-msvc"
-          curl -LO "$LINK/$SCCACHE_FILE.tar.gz"
-          tar xzf "$SCCACHE_FILE.tar.gz"
-          echo "$Env:GITHUB_WORKSPACE/$SCCACHE_FILE" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
       - name: Install stable-${{ matrix.conf.target }}
         uses: dtolnay/rust-toolchain@master
         with:
@@ -389,28 +315,8 @@ jobs:
           $CARGO_C_FILE = "cargo-c-windows-msvc"
           curl -LO "$LINK/$CARGO_C_FILE.zip"
           7z e -y "$CARGO_C_FILE.zip" -o"${env:USERPROFILE}\.cargo\bin"
-      - name: Generate Cargo.version for cache key
-        run: |
-          cargo --version > Cargo.version
-      - name: Cache cargo registry
-        uses: actions/cache@v4
-        continue-on-error: true
-        with:
-          path: ~/.cargo/registry/cache
-          key: ${{ runner.os }}-${{ matrix.conf.name }}-${{ matrix.conf.target }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.conf.name }}-${{ matrix.conf.target }}-cargo-registry-
-      - name: Cache sccache output
-        uses: actions/cache@v4
-        continue-on-error: true
-        with:
-          path: C:\sccache
-          key: ${{ runner.os }}-${{ matrix.conf.name }}-${{ matrix.conf.target }}-sccache-${{ hashFiles('**/Cargo.*') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.conf.name }}-${{ matrix.conf.target }}-sccache-
-      - name: Start sccache server
-        run: |
-          sccache --start-server
+      - name: Cache cargo registry and compiled dependencies
+        uses: Swatinem/rust-cache@v2
       - name: Build
         if: matrix.conf.name == 'cargo-build'
         run: |
@@ -426,6 +332,3 @@ jobs:
         run: |
           cargo fetch
           cargo cbuild --offline
-      - name: Stop sccache server
-        run: |
-          sccache --stop-server
