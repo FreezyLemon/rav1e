@@ -30,6 +30,60 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           args: -- -D warnings --verbose -A clippy::wrong-self-convention -A clippy::many_single_char_names -A clippy::upper-case-acronyms
 
+  codecov:
+    runs-on: ubuntu-22.04
+
+    needs: rustfmt-clippy
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust with LLVM tools
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: llvm-tools-preview
+      - uses: ilammy/setup-nasm@v1
+      - name: Install libdav1d dependencies
+        run: |
+          sudo apt update
+          sudo apt install meson ninja-build
+      - name: Install grcov
+        env:
+          LINK: https://github.com/mozilla/grcov/releases/latest/download
+        run: |
+          curl -L "$LINK/grcov-x86_64-unknown-linux-musl.tar.bz2" |
+          tar xj -C $HOME/.cargo/bin
+      - name: Install Intel SDE
+        uses: petarpetrovt/setup-sde@v2.3
+
+      - name: Run tests with coverage
+        env:
+          CARGO_INCREMENTAL: 0
+          LLVM_PROFILE_FILE: "rav1e-%p-%m.profraw"
+          RUSTFLAGS: >
+            -Cinstrument-coverage -Ccodegen-units=1 -Clink-dead-code
+            -Coverflow-checks=off
+          RUSTDOCFLAGS: >
+            -Cinstrument-coverage -Ccodegen-units=1 -Clink-dead-code
+            -Coverflow-checks=off
+          CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUNNER: >
+            ${{ env.SDE_PATH }}/sde -icx --
+        run: |
+          cargo test --workspace --features=decode_test,decode_test_dav1d,quick_test
+
+      - name: Run grcov
+        run: |
+          grcov . --binary-path ./target/x86_64-unknown-linux-gnu/debug/  -s . \
+                -t lcov --branch --ignore-not-existing --ignore "/*" \
+                --ignore "../*" --ignore "target/*" --ignore "examples/*" \
+                --ignore "tests/*" --ignore "src/test_encode_decode/*" \
+                --ignore "src/x86/*" --ignore "src/ext/x86/*" \
+                --excl-line "grcov-excl-line|.*unreachable.*" \
+                --ignore "tools/*" --ignore "crates/*" -o lcov.info
+      - name: Codecov upload
+        uses: codecov/codecov-action@v4
+        with:
+          files: lcov.info
+
   build-unix:
     strategy:
       matrix:
@@ -45,8 +99,6 @@ jobs:
           - name: dav1d-tests-arm64
             toolchain: stable
           - name: no-asm-tests
-            toolchain: stable
-          - name: grcov-codecov
             toolchain: stable
           - name: bench
             toolchain: stable
@@ -103,24 +155,11 @@ jobs:
         run: |
           curl -L "$LINK/cargo-c-x86_64-unknown-linux-musl.tar.gz" |
           tar xz -C $HOME/.cargo/bin
-      - name: Install grcov
-        if: matrix.conf.name == 'grcov-codecov'
-        env:
-          LINK: https://github.com/mozilla/grcov/releases/latest/download
-        run: |
-          curl -L "$LINK/grcov-x86_64-unknown-linux-musl.tar.bz2" |
-          tar xj -C $HOME/.cargo/bin
-      - name: Install Intel SDE
-        if: matrix.conf.name == 'grcov-codecov'
-        uses: petarpetrovt/setup-sde@v2.3
+
       - name: Install ${{ matrix.conf.toolchain }}
         uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.conf.toolchain }}
-      - name: Install llvm-tools-preview
-        if: matrix.conf.name == 'grcov-codecov'
-        run: |
-          rustup component add llvm-tools-preview
       - name: Install aarch64 toolchain, qemu-user and libdav1d deps
         if: matrix.conf.name == 'dav1d-tests-arm64'
         env:
@@ -223,49 +262,14 @@ jobs:
         if: matrix.conf.name == 'fuzz'
         run: |
           cargo fuzz build --sanitizer none
-      - name: Run cargo clean
-        if: matrix.conf.name == 'grcov-codecov'
-        run: |
-          cargo clean
 
-      - name: Run tests with coverage
-        if: matrix.conf.name == 'grcov-codecov'
-        env:
-          CARGO_INCREMENTAL: 0
-          LLVM_PROFILE_FILE: "rav1e-%p-%m.profraw"
-          RUSTFLAGS: >
-            -Cinstrument-coverage -Ccodegen-units=1 -Clink-dead-code
-            -Coverflow-checks=off
-          RUSTDOCFLAGS: >
-            -Cinstrument-coverage -Ccodegen-units=1 -Clink-dead-code
-            -Coverflow-checks=off
-          CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUNNER: >
-            ${{ env.SDE_PATH }}/sde -icx --
-        run: |
-          cargo test --workspace --verbose --target x86_64-unknown-linux-gnu \
-                     --features=decode_test,decode_test_dav1d,quick_test
       - name: Run unit tests
         if: matrix.conf.name == 'no-asm-tests'
         run: |
           cargo test --workspace --verbose
-      - name: Run grcov
-        if: matrix.conf.name == 'grcov-codecov'
-        run: |
-          grcov . --binary-path ./target/x86_64-unknown-linux-gnu/debug/  -s . \
-                -t lcov --branch --ignore-not-existing --ignore "/*" \
-                --ignore "../*" --ignore "target/*" --ignore "examples/*" \
-                --ignore "tests/*" --ignore "src/test_encode_decode/*" \
-                --ignore "src/x86/*" --ignore "src/ext/x86/*" \
-                --excl-line "grcov-excl-line|.*unreachable.*" \
-                --ignore "tools/*" --ignore "crates/*" -o lcov.info
       - name: Stop sccache server
         run: |
           sccache --stop-server
-      - name: Codecov upload
-        if: matrix.conf.name == 'grcov-codecov'
-        uses: codecov/codecov-action@v4
-        with:
-          files: lcov.info
 
   build-macos:
     strategy:
