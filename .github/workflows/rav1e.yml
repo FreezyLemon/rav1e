@@ -34,47 +34,33 @@ jobs:
     strategy:
       matrix:
         conf:
-          - beta-build
-          - 1.70.0-tests
-          - aom-tests
-          - dav1d-tests
-          - no-asm-tests
-          - grcov-codecov
-          - bench
-          - doc
-          - cargo-c
-          - check-no-default
-          - check-extra-feats
-          - check-unstable-feats
-          - fuzz
-        include:
-          - conf: beta-build
+          - name: beta-build
             toolchain: beta
-          - conf: 1.70.0-tests
+          - name: 1.70.0-tests
             toolchain: 1.70.0
-          - conf: aom-tests
+          - name: aom-tests
             toolchain: stable
-          - conf: dav1d-tests
+          - name: dav1d-tests
             toolchain: stable
-          - conf: dav1d-tests-arm64
+          - name: dav1d-tests-arm64
             toolchain: stable
-          - conf: no-asm-tests
+          - name: no-asm-tests
             toolchain: stable
-          - conf: grcov-codecov
+          - name: grcov-codecov
             toolchain: stable
-          - conf: bench
+          - name: bench
             toolchain: stable
-          - conf: doc
+          - name: doc
             toolchain: stable
-          - conf: cargo-c
+          - name: cargo-c
             toolchain: stable
-          - conf: check-no-default
+          - name: check-no-default
             toolchain: stable
-          - conf: check-extra-feats
+          - name: check-extra-feats
             toolchain: stable
-          - conf: check-unstable-feats
+          - name: check-unstable-feats
             toolchain: stable
-          - conf: fuzz
+          - name: fuzz
             toolchain: stable
 
     env:
@@ -89,7 +75,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Set no-asm-tests env vars
-        if: matrix.conf == 'no-asm-tests'
+        if: matrix.conf.name == 'no-asm-tests'
         run: |
           echo "name=RAV1E_CPU_TARGET::rust" >> $GITHUB_ENV
       - name: Install sccache
@@ -104,39 +90,39 @@ jobs:
           mv -f $SCCACHE_FILE/sccache $HOME/.local/bin/sccache
           echo "$HOME/.local/bin" >> $GITHUB_PATH
       - name: Install dependencies
-        if: matrix.conf != 'dav1d-tests-arm64'
+        if: matrix.conf.name != 'dav1d-tests-arm64'
         run: |
           sudo sed -i 's/jammy/lunar/g' /etc/apt/sources.list
           sudo rm /etc/apt/sources.list.d/*.list
           sudo apt update
           sudo apt install nasm libaom-dev meson ninja-build nasm
       - name: Install cargo-c
-        if: matrix.conf == 'cargo-c'
+        if: matrix.conf.name == 'cargo-c'
         env:
           LINK: https://github.com/lu-zero/cargo-c/releases/latest/download
         run: |
           curl -L "$LINK/cargo-c-x86_64-unknown-linux-musl.tar.gz" |
           tar xz -C $HOME/.cargo/bin
       - name: Install grcov
-        if: matrix.conf == 'grcov-codecov'
+        if: matrix.conf.name == 'grcov-codecov'
         env:
           LINK: https://github.com/mozilla/grcov/releases/latest/download
         run: |
           curl -L "$LINK/grcov-x86_64-unknown-linux-musl.tar.bz2" |
           tar xj -C $HOME/.cargo/bin
       - name: Install Intel SDE
-        if: matrix.conf == 'grcov-codecov'
+        if: matrix.conf.name == 'grcov-codecov'
         uses: petarpetrovt/setup-sde@v2.3
-      - name: Install ${{ matrix.toolchain }}
+      - name: Install ${{ matrix.conf.toolchain }}
         uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: ${{ matrix.toolchain }}
+          toolchain: ${{ matrix.conf.toolchain }}
       - name: Install llvm-tools-preview
-        if: matrix.conf == 'grcov-codecov'
+        if: matrix.conf.name == 'grcov-codecov'
         run: |
           rustup component add llvm-tools-preview
       - name: Install aarch64 toolchain, qemu-user and libdav1d deps
-        if: matrix.conf == 'dav1d-tests-arm64'
+        if: matrix.conf.name == 'dav1d-tests-arm64'
         env:
           LINK: http://ports.ubuntu.com/ubuntu-ports/pool
         run: |
@@ -156,39 +142,39 @@ jobs:
         continue-on-error: true
         with:
           path: ~/.cargo/registry/cache
-          key: ${{ runner.os }}-${{ matrix.conf }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-${{ matrix.conf.name }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
-            ${{ runner.os }}-${{ matrix.conf }}-cargo-registry-
+            ${{ runner.os }}-${{ matrix.conf.name }}-cargo-registry-
       - name: Cache sccache output
         uses: actions/cache@v4
         continue-on-error: true
         with:
           path: /home/runner/.cache/sccache
-          key: ${{ runner.os }}-${{ matrix.conf }}-sccache-${{ hashFiles('**/Cargo.*') }}
+          key: ${{ runner.os }}-${{ matrix.conf.name }}-sccache-${{ hashFiles('**/Cargo.*') }}
           restore-keys: |
-            ${{ runner.os }}-${{ matrix.conf }}-sccache-
+            ${{ runner.os }}-${{ matrix.conf.name }}-sccache-
       - name: Start sccache server
         run: |
           sccache --start-server
       - name: Run 1.70.0 tests
-        if: matrix.toolchain == '1.70.0' && matrix.conf == '1.70.0-tests'
+        if: matrix.conf.toolchain == '1.70.0' && matrix.conf.name == '1.70.0-tests'
         run: |
           cargo test --workspace --verbose \
                      --features=decode_test,decode_test_dav1d,quick_test,capi
       - name: Run aom tests
-        if: matrix.toolchain == 'stable' && matrix.conf == 'aom-tests'
+        if: matrix.conf.toolchain == 'stable' && matrix.conf.name == 'aom-tests'
         run: |
           cargo test --workspace --verbose --release \
                      --features=decode_test \
                      --color=always -- --color=always --ignored
       - name: Run dav1d tests
-        if: matrix.toolchain == 'stable' && (matrix.conf == 'dav1d-tests' || matrix.conf == 'no-asm-tests')
+        if: matrix.conf.toolchain == 'stable' && (matrix.conf.name == 'dav1d-tests' || matrix.conf == 'no-asm-tests')
         run: |
           cargo test --workspace --verbose --release \
                      --features=decode_test_dav1d \
                      --color=always -- --color=always --ignored
       - name: Run dav1d tests (arm64)
-        if: matrix.conf == 'dav1d-tests-arm64'
+        if: matrix.conf.name == 'dav1d-tests-arm64'
         env:
           CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUNNER: qemu-aarch64 -L /usr/aarch64-linux-gnu
           CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUSTFLAGS: -Clinker=aarch64-linux-gnu-gcc
@@ -199,51 +185,51 @@ jobs:
                      --no-default-features --features=asm,decode_test_dav1d -- \
                      --include-ignored
       - name: Run build
-        if: matrix.conf == 'beta-build'
+        if: matrix.conf.name == 'beta-build'
         run: |
           cargo build --verbose
       - name: Run bench
-        if: matrix.toolchain == 'stable' && matrix.conf == 'bench'
+        if: matrix.conf.toolchain == 'stable' && matrix.conf.name == 'bench'
         run: |
           cargo bench --features=bench --no-run --verbose
       - name: Run doc
-        if: matrix.toolchain == 'stable' && matrix.conf == 'doc'
+        if: matrix.conf.toolchain == 'stable' && matrix.conf.name == 'doc'
         run: |
           cargo doc --verbose --no-deps
       - name: Check no default features
-        if: matrix.toolchain == 'stable' && matrix.conf == 'check-no-default'
+        if: matrix.conf.toolchain == 'stable' && matrix.conf.name == 'check-no-default'
         run: |
           cargo check --no-default-features
       - name: Check extra features
-        if: matrix.toolchain == 'stable' && matrix.conf == 'check-extra-feats'
+        if: matrix.conf.toolchain == 'stable' && matrix.conf.name == 'check-extra-feats'
         run: |
           cargo check --features=check_asm,capi,dump_lookahead_data,serialize,bench,tracing --all-targets
       - name: Check extra features
-        if: matrix.toolchain == 'stable' && matrix.conf == 'check-unstable-feats'
+        if: matrix.conf.toolchain == 'stable' && matrix.conf.name == 'check-unstable-feats'
         run: |
           cargo check --features=unstable,channel-api
       - name: Run cargo-c
-        if: matrix.conf == 'cargo-c'
+        if: matrix.conf.name == 'cargo-c'
         env:
           CARGO_REGISTRIES_CRATES_IO_PROTOCOL: git
         run: |
           cargo fetch
           cargo cbuild --offline
       - name: Install cargo-fuzz
-        if: matrix.conf == 'fuzz'
+        if: matrix.conf.name == 'fuzz'
         run: |
           cargo install cargo-fuzz
       - name: Run cargo-fuzz
-        if: matrix.conf == 'fuzz'
+        if: matrix.conf.name == 'fuzz'
         run: |
           cargo fuzz build --sanitizer none
       - name: Run cargo clean
-        if: matrix.conf == 'grcov-codecov'
+        if: matrix.conf.name == 'grcov-codecov'
         run: |
           cargo clean
 
       - name: Run tests with coverage
-        if: matrix.conf == 'grcov-codecov'
+        if: matrix.conf.name == 'grcov-codecov'
         env:
           CARGO_INCREMENTAL: 0
           LLVM_PROFILE_FILE: "rav1e-%p-%m.profraw"
@@ -259,11 +245,11 @@ jobs:
           cargo test --workspace --verbose --target x86_64-unknown-linux-gnu \
                      --features=decode_test,decode_test_dav1d,quick_test
       - name: Run unit tests
-        if: matrix.conf == 'no-asm-tests'
+        if: matrix.conf.name == 'no-asm-tests'
         run: |
           cargo test --workspace --verbose
       - name: Run grcov
-        if: matrix.conf == 'grcov-codecov'
+        if: matrix.conf.name == 'grcov-codecov'
         run: |
           grcov . --binary-path ./target/x86_64-unknown-linux-gnu/debug/  -s . \
                 -t lcov --branch --ignore-not-existing --ignore "/*" \
@@ -276,7 +262,7 @@ jobs:
         run: |
           sccache --stop-server
       - name: Codecov upload
-        if: matrix.conf == 'grcov-codecov'
+        if: matrix.conf.name == 'grcov-codecov'
         uses: codecov/codecov-action@v4
         with:
           files: lcov.info
@@ -284,21 +270,16 @@ jobs:
   build-macos:
     strategy:
       matrix:
-        include:
-          - name: Cargo build (x64)
-            conf: cargo-build
+        conf:
+          - name: cargo-build
             target: x86_64-apple-darwin
-          - name: Cargo test (x64)
-            conf: cargo-test
+          - name: cargo-test
             target: x86_64-apple-darwin
-          - name: Cargo C-build (x64)
-            conf: cargo-c
+          - name: cargo-c
             target: x86_64-apple-darwin
-          - name: Cargo build (Arm64)
-            conf: cargo-build
+          - name: cargo-build
             target: aarch64-apple-darwin
-          - name: Cargo C-build (Arm64)
-            conf: cargo-c
+          - name: cargo-c
             target: aarch64-apple-darwin
 
     env:
@@ -317,13 +298,13 @@ jobs:
         run: |
           brew install nasm
       - name: Install cargo-c
-        if: matrix.conf == 'cargo-c'
+        if: matrix.conf.name == 'cargo-c'
         run: |
           brew install cargo-c
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
-          target: ${{ matrix.target }}
+          target: ${{ matrix.conf.target }}
       - name: Generate Cargo.version for cache key
         run: |
           cargo --version > Cargo.version
@@ -332,35 +313,35 @@ jobs:
         continue-on-error: true
         with:
           path: ~/.cargo/registry/cache
-          key: ${{ runner.os }}-${{ matrix.conf }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-${{ matrix.conf.name }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
-            ${{ runner.os }}-${{ matrix.conf }}-cargo-registry-
+            ${{ runner.os }}-${{ matrix.conf.name }}-cargo-registry-
       - name: Cache sccache output
         uses: actions/cache@v4
         continue-on-error: true
         with:
           path: /Users/runner/Library/Caches/Mozilla.sccache
-          key: ${{ runner.os }}-${{ matrix.conf }}-sccache-${{ hashFiles('**/Cargo.*') }}
+          key: ${{ runner.os }}-${{ matrix.conf.name }}-sccache-${{ hashFiles('**/Cargo.*') }}
           restore-keys: |
-            ${{ runner.os }}-${{ matrix.conf }}-sccache-
+            ${{ runner.os }}-${{ matrix.conf.name }}-sccache-
       - name: Start sccache server
         run: |
           sccache --start-server
       - name: Build
-        if: matrix.conf == 'cargo-build'
+        if: matrix.conf.name == 'cargo-build'
         run: |
-          cargo build --release --target=${{ matrix.target }}
+          cargo build --release --target=${{ matrix.conf.target }}
       - name: Test
-        if: matrix.conf == 'cargo-test'
+        if: matrix.conf.name == 'cargo-test'
         run: |
-          cargo test --workspace --verbose --target=${{ matrix.target }}
+          cargo test --workspace --verbose --target=${{ matrix.conf.target }}
       - name: Run cargo-c
-        if: matrix.conf == 'cargo-c'
+        if: matrix.conf.name == 'cargo-c'
         env:
           CARGO_REGISTRIES_CRATES_IO_PROTOCOL: git
         run: |
           cargo fetch
-          cargo cbuild --target=${{ matrix.target }} --offline
+          cargo cbuild --target=${{ matrix.conf.target }} --offline
       - name: Stop sccache server
         run: |
           sccache --stop-server
@@ -368,12 +349,12 @@ jobs:
   build-windows:
     strategy:
       matrix:
-        include:
-          - conf: cargo-build
+        conf:
+          - name: cargo-build
             target: x86_64-pc-windows-msvc
-          - conf: cargo-test
+          - name: cargo-test
             target: x86_64-pc-windows-msvc
-          - conf: cargo-c
+          - name: cargo-c
             target: x86_64-pc-windows-gnu
 
     env:
@@ -393,12 +374,12 @@ jobs:
           curl -LO "$LINK/$SCCACHE_FILE.tar.gz"
           tar xzf "$SCCACHE_FILE.tar.gz"
           echo "$Env:GITHUB_WORKSPACE/$SCCACHE_FILE" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-      - name: Install stable-${{ matrix.target }}
+      - name: Install stable-${{ matrix.conf.target }}
         uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: stable-${{ matrix.target }}
+          toolchain: stable-${{ matrix.conf.target }}
       - name: Install cargo-c
-        if: matrix.conf == 'cargo-c'
+        if: matrix.conf.name == 'cargo-c'
         run: |
           $LINK = "https://github.com/lu-zero/cargo-c/releases/latest/download"
           $CARGO_C_FILE = "cargo-c-windows-msvc"
@@ -412,30 +393,30 @@ jobs:
         continue-on-error: true
         with:
           path: ~/.cargo/registry/cache
-          key: ${{ runner.os }}-${{ matrix.conf }}-${{ matrix.target }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-${{ matrix.conf.name }}-${{ matrix.conf.target }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
-            ${{ runner.os }}-${{ matrix.conf }}-${{ matrix.target }}-cargo-registry-
+            ${{ runner.os }}-${{ matrix.conf.name }}-${{ matrix.conf.target }}-cargo-registry-
       - name: Cache sccache output
         uses: actions/cache@v4
         continue-on-error: true
         with:
           path: C:\sccache
-          key: ${{ runner.os }}-${{ matrix.conf }}-${{ matrix.target }}-sccache-${{ hashFiles('**/Cargo.*') }}
+          key: ${{ runner.os }}-${{ matrix.conf.name }}-${{ matrix.conf.target }}-sccache-${{ hashFiles('**/Cargo.*') }}
           restore-keys: |
-            ${{ runner.os }}-${{ matrix.conf }}-${{ matrix.target }}-sccache-
+            ${{ runner.os }}-${{ matrix.conf.name }}-${{ matrix.conf.target }}-sccache-
       - name: Start sccache server
         run: |
           sccache --start-server
       - name: Build
-        if: matrix.conf == 'cargo-build'
+        if: matrix.conf.name == 'cargo-build'
         run: |
           cargo build --release
       - name: Test
-        if: matrix.conf == 'cargo-test'
+        if: matrix.conf.name == 'cargo-test'
         run: |
           cargo test --workspace --verbose
       - name: Run cargo-c
-        if: matrix.conf == 'cargo-c'
+        if: matrix.conf.name == 'cargo-c'
         env:
           CARGO_REGISTRIES_CRATES_IO_PROTOCOL: git
         run: |
