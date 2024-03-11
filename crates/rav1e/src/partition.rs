@@ -17,9 +17,9 @@ use crate::recon_intra::*;
 use crate::tiling::*;
 use crate::transform::TxSize;
 use crate::util::*;
+use rav1e_partitioning::TileBlockOffset;
 use rav1e_partitioning::LOCAL_BLOCK_MASK;
 use rav1e_partitioning::MI_SIZE_LOG2;
-use rav1e_partitioning::TileBlockOffset;
 
 use rav1e_partitioning::{BlockSize, BlockSize::*, PartitionType};
 use std::mem::transmute;

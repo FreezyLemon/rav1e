@@ -36,8 +36,8 @@ use crate::transform::*;
 use crate::util::*;
 use crate::wasm_bindgen::*;
 
-use rav1e_partitioning::*;
 use rav1e_partitioning::PartitionType::*;
+use rav1e_partitioning::*;
 
 use arg_enum_proc_macro::ArgEnum;
 use arrayvec::*;

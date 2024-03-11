@@ -8,8 +8,8 @@
 // PATENTS file, you can obtain it at www.aomedia.org/license/patent.
 
 use super::*;
-use std::marker::PhantomData;
 use rav1e_partitioning::*;
+use std::marker::PhantomData;
 
 pub const CDF_LEN_MAX: usize = 16;
 

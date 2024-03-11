@@ -11,8 +11,8 @@
 #![allow(non_camel_case_types)]
 #![allow(dead_code)]
 
-use rav1e_partitioning::*;
 use rav1e_partitioning::BlockSize::*;
+use rav1e_partitioning::*;
 use rav1e_tx::TxSize;
 
 use crate::transform::TxSizeExt;

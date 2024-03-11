@@ -23,9 +23,9 @@ pub const fn kernel_fn_index(w: usize, h: usize) -> usize {
 }
 
 pub const CDEF_DIST_KERNEL_FNS_SSE2: [Option<CdefDistKernelFn>;
-CDEF_DIST_KERNEL_FNS_LENGTH] = {
+  CDEF_DIST_KERNEL_FNS_LENGTH] = {
   let mut out: [Option<CdefDistKernelFn>; CDEF_DIST_KERNEL_FNS_LENGTH] =
-  [None; CDEF_DIST_KERNEL_FNS_LENGTH];
+    [None; CDEF_DIST_KERNEL_FNS_LENGTH];
 
   out[kernel_fn_index(4, 4)] = Some(rav1e_cdef_dist_kernel_4x4_sse2);
   out[kernel_fn_index(4, 8)] = Some(rav1e_cdef_dist_kernel_4x8_sse2);

@@ -45,8 +45,8 @@ use crate::{encode_block_post_cdef, encode_block_pre_cdef};
 
 use arrayvec::*;
 use itertools::izip;
-use rav1e_partitioning::*;
 use rav1e_partitioning::PartitionType::*;
+use rav1e_partitioning::*;
 use std::fmt;
 use std::mem::MaybeUninit;
 
