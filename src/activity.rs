@@ -11,7 +11,6 @@ use crate::frame::*;
 use crate::rdo::DistortionScale;
 use crate::tiling::*;
 use crate::util::*;
-use itertools::izip;
 
 #[derive(Debug, Default, Clone)]
 pub struct ActivityMask {
@@ -79,7 +78,9 @@ fn variance_8x8<T: Pixel>(src: &PlaneRegion<'_, T>) -> u32 {
 
   for j in 0..8 {
     let row = &src[j][0..8];
-    for (sum_s, sum_s2, s) in izip!(&mut sum_s_cols, &mut sum_s2_cols, row) {
+    for ((sum_s, sum_s2), s) in
+      sum_s_cols.iter_mut().zip(&mut sum_s2_cols).zip(row)
+    {
       // Don't convert directly to u32 to allow better vectorization
       let s: u16 = u16::cast_from(*s);
       *sum_s += s;

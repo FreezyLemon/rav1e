@@ -44,7 +44,6 @@ use crate::Tune;
 use crate::{encode_block_post_cdef, encode_block_pre_cdef};
 
 use arrayvec::*;
-use itertools::izip;
 use std::fmt;
 use std::mem::MaybeUninit;
 
@@ -1353,14 +1352,14 @@ fn inter_frame_rdo_mode_decision<T: Pixel>(
     }
   });
 
-  let mut sorted =
-    izip!(inter_mode_set, mvs_set, satds).collect::<ArrayVec<_, 20>>();
+  let mut sorted: ArrayVec<_, 20> =
+    inter_mode_set.into_iter().zip(mvs_set).zip(satds).collect();
   if num_modes_rdo != sorted.len() {
-    sorted.sort_by_key(|((_mode, _i), _mvs, satd)| *satd);
+    sorted.sort_by_key(|(((_mode, _i), _mvs), satd)| *satd);
   }
 
   sorted.iter().take(num_modes_rdo).for_each(
-    |&((luma_mode, i), mvs, _satd)| {
+    |&(((luma_mode, i), mvs), _satd)| {
       let mode_set_chroma = ArrayVec::from([luma_mode]);
 
       luma_chroma_mode_rdo(

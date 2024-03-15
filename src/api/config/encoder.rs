@@ -7,8 +7,6 @@
 // Media Patent License 1.0 was not distributed with this source code in the
 // PATENTS file, you can obtain it at www.aomedia.org/license/patent.
 
-use itertools::*;
-
 use crate::api::color::*;
 use crate::api::config::GrainTableSegment;
 use crate::api::{Rational, SpeedSettings};
@@ -261,6 +259,8 @@ impl EncoderConfig {
 
 impl fmt::Display for EncoderConfig {
   fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
+    let speed = self.speed_settings;
+
     let pairs = [
       ("keyint_min", self.min_key_frame_interval.to_string()),
       ("keyint_max", self.max_key_frame_interval.to_string()),
@@ -269,79 +269,38 @@ impl fmt::Display for EncoderConfig {
       ("min_quantizer", self.min_quantizer.to_string()),
       ("low_latency", self.low_latency.to_string()),
       ("tune", self.tune.to_string()),
-      (
-        "rdo_lookahead_frames",
-        self.speed_settings.rdo_lookahead_frames.to_string(),
-      ),
-      (
-        "multiref",
-        (!self.low_latency || self.speed_settings.multiref).to_string(),
-      ),
-      ("fast_deblock", self.speed_settings.fast_deblock.to_string()),
-      (
-        "scene_detection_mode",
-        self.speed_settings.scene_detection_mode.to_string(),
-      ),
-      ("cdef", self.speed_settings.cdef.to_string()),
-      ("lrf", self.speed_settings.lrf.to_string()),
+      ("rdo_lookahead_frames", speed.rdo_lookahead_frames.to_string()),
+      ("multiref", (!self.low_latency || speed.multiref).to_string()),
+      ("fast_deblock", speed.fast_deblock.to_string()),
+      ("scene_detection_mode", speed.scene_detection_mode.to_string()),
+      ("cdef", speed.cdef.to_string()),
+      ("lrf", speed.lrf.to_string()),
       ("enable_timing_info", self.enable_timing_info.to_string()),
-      (
-        "min_block_size",
-        self.speed_settings.partition.partition_range.min.to_string(),
-      ),
-      (
-        "max_block_size",
-        self.speed_settings.partition.partition_range.max.to_string(),
-      ),
-      (
-        "encode_bottomup",
-        self.speed_settings.partition.encode_bottomup.to_string(),
-      ),
+      ("min_block_size", speed.partition.partition_range.min.to_string()),
+      ("max_block_size", speed.partition.partition_range.max.to_string()),
+      ("encode_bottomup", speed.partition.encode_bottomup.to_string()),
       (
         "non_square_partition_max_threshold",
-        self
-          .speed_settings
-          .partition
-          .non_square_partition_max_threshold
-          .to_string(),
+        speed.partition.non_square_partition_max_threshold.to_string(),
       ),
-      (
-        "reduced_tx_set",
-        self.speed_settings.transform.reduced_tx_set.to_string(),
-      ),
+      ("reduced_tx_set", speed.transform.reduced_tx_set.to_string()),
       (
         "tx_domain_distortion",
-        self.speed_settings.transform.tx_domain_distortion.to_string(),
+        speed.transform.tx_domain_distortion.to_string(),
       ),
-      (
-        "tx_domain_rate",
-        self.speed_settings.transform.tx_domain_rate.to_string(),
-      ),
-      (
-        "rdo_tx_decision",
-        self.speed_settings.transform.rdo_tx_decision.to_string(),
-      ),
-      (
-        "prediction_modes",
-        self.speed_settings.prediction.prediction_modes.to_string(),
-      ),
+      ("tx_domain_rate", speed.transform.tx_domain_rate.to_string()),
+      ("rdo_tx_decision", speed.transform.rdo_tx_decision.to_string()),
+      ("prediction_modes", speed.prediction.prediction_modes.to_string()),
       (
         "fine_directional_intra",
-        self.speed_settings.prediction.fine_directional_intra.to_string(),
+        speed.prediction.fine_directional_intra.to_string(),
       ),
-      (
-        "include_near_mvs",
-        self.speed_settings.motion.include_near_mvs.to_string(),
-      ),
-      (
-        "use_satd_subpel",
-        self.speed_settings.motion.use_satd_subpel.to_string(),
-      ),
+      ("include_near_mvs", speed.motion.include_near_mvs.to_string()),
+      ("use_satd_subpel", speed.motion.use_satd_subpel.to_string()),
     ];
-    write!(
-      f,
-      "{}",
-      pairs.iter().map(|pair| format!("{}={}", pair.0, pair.1)).join(" ")
-    )
+
+    let props: Vec<_> =
+      pairs.iter().map(|(k, v)| format!("{k}={v}")).collect();
+    write!(f, "{}", props.join(" "))
   }
 }
