@@ -19,7 +19,6 @@ use crate::mc::MotionVector;
 use crate::partition::*;
 use crate::predict::PredictionMode;
 use crate::tiling::*;
-use crate::util::ILog;
 use crate::util::{clamp, Pixel};
 use crate::FrameInvariants;
 
@@ -1513,11 +1512,13 @@ fn get_mv_rate(
   a: MotionVector, b: MotionVector, allow_high_precision_mv: bool,
 ) -> u32 {
   #[inline(always)]
-  fn diff_to_rate(diff: i16, allow_high_precision_mv: bool) -> u32 {
-    let d = if allow_high_precision_mv { diff } else { diff >> 1 };
-    2 * ILog::ilog(d.abs()) as u32
+  fn diff_to_rate(diff: u16, allow_high_precision_mv: bool) -> u32 {
+    diff.checked_ilog2()
+      .map(|l| l - u32::from(allow_high_precision_mv))
+      .map(|l| 2 * l)
+      .unwrap_or(0)
   }
 
-  diff_to_rate(a.row - b.row, allow_high_precision_mv)
-    + diff_to_rate(a.col - b.col, allow_high_precision_mv)
+  diff_to_rate(a.row.abs_diff(b.row), allow_high_precision_mv)
+    + diff_to_rate(a.col.abs_diff(b.col), allow_high_precision_mv)
 }
